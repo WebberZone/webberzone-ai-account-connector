@@ -38,8 +38,10 @@ abstract class Connectors {
 		$token_store = static::TOKEN_STORE;
 		$config      = static::CONFIG;
 		$admin       = static::ADMIN;
-		$tokens      = $token_store::get();
-		$note        = $config::note();
+		$oauth       = $admin::OAUTH;
+		$oauth::verify_connection();
+		$tokens = $token_store::get();
+		$note   = $config::note();
 		return array_merge(
 			(array) $data,
 			array(
@@ -52,6 +54,7 @@ abstract class Connectors {
 				'note'       => $note['text'],
 				'noteUrl'    => $note['url'],
 				'warning'    => $config::warning(),
+				'expect'     => $config::expect(),
 				'pasteLabel' => $config::paste_label(),
 				'manageUrl'  => $config::manage_url(),
 				'strings'    => array(

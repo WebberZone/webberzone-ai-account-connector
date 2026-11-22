@@ -103,17 +103,24 @@ class Config {
 	/**
 	 * Where the user can see and remove this site's access, in ChatGPT settings.
 	 *
+	 * Available once the site has been registered with OpenAI, and kept after disconnecting because the app stays listed there.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @return string URL.
+	 * @return string URL, or an empty string before the first sign-in.
 	 */
 	public static function manage_url() {
 		$saved = get_option( OAuth::CLIENT_OPTION );
-		$args  = array( 'view' => 'linked-apps' );
-		if ( is_array( $saved ) && ! empty( $saved['client_id'] ) ) {
-			$args['client_id'] = $saved['client_id'];
+		if ( ! is_array( $saved ) || empty( $saved['client_id'] ) ) {
+			return '';
 		}
-		return add_query_arg( $args, 'https://chatgpt.com/settings/security' );
+		return add_query_arg(
+			array(
+				'view'      => 'linked-apps',
+				'client_id' => $saved['client_id'],
+			),
+			'https://chatgpt.com/settings/security'
+		);
 	}
 
 	/**
@@ -125,6 +132,17 @@ class Config {
 	 */
 	public static function manage_label() {
 		return __( 'Manage access in ChatGPT settings', 'webberzone-ai-account-connector' );
+	}
+
+	/**
+	 * What to expect after approving, shown before the sign-in page opens.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function expect() {
+		return __( 'After approving access, your browser may show \'This site can\'t be reached.\' That is expected. Copy the address from that tab, return here, and paste it below.', 'webberzone-ai-account-connector' );
 	}
 
 	/**

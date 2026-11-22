@@ -185,6 +185,7 @@ function registerAccount( config ) {
 						warning.map( ( paragraph, index ) => el( Text, { as: 'p', key: index }, paragraph ) )
 					)
 				),
+				config.expect && el( Text, { as: 'p' }, config.expect ),
 				el( CheckboxControl, {
 					label: s.acknowledge,
 					checked,
@@ -280,7 +281,7 @@ function registerAccount( config ) {
 			ConnectorItem,
 			{ className: 'connector-item--' + MODULE, logo, name, description, actionArea },
 			connected && config.account ? el( Text, { variant: 'muted', size: 12 }, config.account ) : null,
-			connected && config.manageUrl ? el( ExternalLink, { href: config.manageUrl }, s.manage ) : null,
+			config.manageUrl ? el( ExternalLink, { href: config.manageUrl }, s.manage ) : null,
 			error && el( Notice, { status: 'error', isDismissible: false }, error ),
 			isOpen &&
 				el( SignInModal, {

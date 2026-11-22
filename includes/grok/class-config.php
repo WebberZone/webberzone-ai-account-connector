@@ -123,6 +123,17 @@ class Config {
 	}
 
 	/**
+	 * What to expect after approving, shown before the sign-in page opens.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function expect() {
+		return __( 'After approving access, xAI shows a one-time code. Copy it, return here, and paste it below.', 'webberzone-ai-account-connector' );
+	}
+
+	/**
 	 * Note shown before signing in. Text inside <a></a> is linked to the URL, when there is one.
 	 *
 	 * @since 1.0.0

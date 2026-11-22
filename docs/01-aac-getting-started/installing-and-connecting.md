@@ -42,7 +42,7 @@ Every connect dialog opens with a warning that you must accept before anything s
 ## Connect ChatGPT
 
 1. Go to **Settings → Connectors** and choose **Sign in with ChatGPT** on the ChatGPT Account card.
-2. Read the warning and tick the box to continue.
+2. Read the warning and the note about what to expect, and tick the box to continue. The dialog stays open with the paste field ready while you approve.
 3. Approve access on the ChatGPT sign-in page that opens, and sign in if asked.
 4. Your browser then shows an error page ("This site can't be reached") at an address starting with `http://127.0.0.1:1455`. That is expected: OpenAI can only redirect to your own computer, and the address contains the sign-in for your site.
 5. Copy the full address from the browser's address bar, paste it into the dialog, and choose **Connect**. The card shows **Connected** with the account email.
@@ -67,7 +67,11 @@ If the WordPress AI plugin shows a connector approval notice, approve **ChatGPT 
 
 ## Disconnect
 
-Choose **Disconnect** on the provider's card. For ChatGPT, the card also has a **Manage access in ChatGPT settings** link, where you can see this site's access and choose **Remove access**. The plugin removes the stored sign-in from your site first, then asks the provider to revoke it. If the provider does not confirm the revocation, a notice recommends removing this site's access in your account settings, with a direct link for ChatGPT.
+Choose **Disconnect** on the provider's card. For ChatGPT, disconnecting revokes the sign-in and this site can no longer use your plan. ChatGPT may still list the app afterwards, with Identity access only (your name, email and profile picture) and no plan access. The **Manage access in ChatGPT settings** link on the card stays after you disconnect so you can check it. While the plan is connected, that page also has a **Remove access** button. The plugin removes the stored sign-in from your site first, then asks the provider to revoke it. If the provider does not confirm the revocation, a notice recommends removing this site's access in your account settings, with a direct link for ChatGPT.
+
+## If Access Is Revoked Elsewhere
+
+If you remove the app's access in ChatGPT settings, requests fail at once with a message to sign in again, and the Connectors screen checks the connection when you open it (at most every ten minutes) and shows the account as not connected.
 
 ## Multisite
 

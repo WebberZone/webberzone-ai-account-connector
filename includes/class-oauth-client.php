@@ -80,6 +80,27 @@ abstract class OAuth_Client {
 	abstract public static function exchange_authorization_code( $input );
 
 	/**
+	 * Checks that the provider still honours the stored sign-in, at most every ten minutes.
+	 *
+	 * A forced refresh clears the tokens when the provider says the grant was revoked, so the Connectors screen stops showing a dead connection as connected. Network errors leave the tokens alone.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function verify_connection() {
+		$token_store = static::TOKEN_STORE;
+		$key         = static::LOCK_OPTION . '_checked';
+		if ( ! $token_store::is_connected() || get_transient( $key ) ) {
+			return;
+		}
+		set_transient( $key, 1, 10 * MINUTE_IN_SECONDS );
+		try {
+			static::refresh( true );
+		} catch ( RuntimeException $e ) {
+			unset( $e );
+		}
+	}
+
+	/**
 	 * Sends the refresh-token request.
 	 *
 	 * @since 1.0.0
