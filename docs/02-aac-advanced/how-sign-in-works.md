@@ -54,6 +54,8 @@ If the provider reports that the session expired or was revoked, the plugin clea
 
 Disconnecting removes the stored tokens and attempts to revoke the sign-in with the provider for that site. Deleting the plugin does the same for every site in a multisite network.
 
+For Grok, revocation ends the refresh token only. xAI may accept the access token already issued until it expires, which is up to about six hours.
+
 ## External Services
 
 | Provider | Hosts | Terms |

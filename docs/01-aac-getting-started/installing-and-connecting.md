@@ -69,6 +69,8 @@ If the WordPress AI plugin shows a connector approval notice, approve **ChatGPT 
 
 Choose **Disconnect** on the provider's card. For ChatGPT, disconnecting revokes the sign-in and this site can no longer use your plan. ChatGPT may still list the app afterwards, with Identity access only (your name, email and profile picture) and no plan access. The **Manage access in ChatGPT settings** link on the card stays after you disconnect so you can check it. While the plan is connected, that page also has a **Remove access** button. The plugin removes the stored sign-in from your site first, then asks the provider to revoke it. If the provider does not confirm the revocation, a notice recommends removing this site's access in your account settings, with a direct link for ChatGPT.
 
+For Grok, disconnecting revokes the refresh token, so this site can no longer renew its sign-in. xAI may keep accepting the access token already issued until it expires, which is up to about six hours. To check or remove the access yourself, open **Connected apps** under the security settings of your xAI account at `accounts.x.ai/account#security`, where the entry is named "Grok Build".
+
 ## If Access Is Revoked Elsewhere
 
 If you remove the app's access in ChatGPT settings, requests fail at once with a message to sign in again, and the Connectors screen checks the connection when you open it (at most every ten minutes) and shows the account as not connected.

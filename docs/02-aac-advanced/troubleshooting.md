@@ -18,6 +18,7 @@ Fixes for the messages [WebberZone AI Account Connector](https://github.com/Webb
 | No ChatGPT card, or a notice about AI Provider for OpenAI | The ChatGPT connector needs a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). Install and activate it. |
 | "The sign-in expired. Start again." | A sign-in is valid for 15 minutes with ChatGPT and 30 minutes with Grok. Choose **Try again** to start a new one. |
 | "The sign-in was declined." (Grok) | You chose to deny access on xAI's page. Choose **Try again** and approve. |
+| The code on xAI's page does not match the dialog (Grok) | Each attempt has its own code, so the xAI page is from an earlier attempt. Close it, choose **Try again** and use the page that opens. |
 | "Paste the full address from your browser" | The ChatGPT dialog needs the whole address the browser was sent to, starting with `http://127.0.0.1`, not just part of it. |
 | "That address does not belong to this sign-in" | The pasted address came from an older or different sign-in attempt. Start again and use the address from the latest one. |
 | "OpenAI did not grant ChatGPT plan usage" | Your plan may not support it. The ChatGPT connector needs a Plus or Pro plan. |
