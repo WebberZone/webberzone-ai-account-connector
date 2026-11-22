@@ -46,7 +46,7 @@ permalink: /
     <h3>Not an official OpenAI or xAI integration</h3>
     <p>This plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI and Grok is a trademark of xAI; the names only describe which accounts it works with. ChatGPT uses OpenAI's official <a href="https://openai.com/policies/sign-in-with-chatgpt-terms/" target="_blank">Sign in with ChatGPT</a> for open-source apps and OpenAI's public Responses API. That programme is a preview and its terms may not cover every kind of hosted site. xAI has no equivalent programme, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools and signs in through xAI's consent screen, with a pasted code. WebberZone has no application of its own registered with either provider (with ChatGPT, each site registers itself with OpenAI as WebberZone AI Account Connector). Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts.</p>
     <ul>
-      <li>A provider may change or block this at any time.</li>
+      <li>A provider may change or block this at any time. xAI has no official programme for this, so Grok is entirely at your own risk.</li>
       <li>Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Check the terms yourself.</li>
       <li>Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in. Use it on sites you control, and do not use one person's subscription for other people's requests, which OpenAI's terms forbid.</li>
     </ul>

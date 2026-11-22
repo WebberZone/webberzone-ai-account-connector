@@ -519,27 +519,6 @@ abstract class OAuth_Client {
 	}
 
 	/**
-	 * Sends a JSON POST request.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param  string $url  URL.
-	 * @param  array  $data Request body.
-	 * @return array HTTP response.
-	 * @throws RuntimeException On transport errors.
-	 */
-	protected static function post_json( $url, array $data ) {
-		return static::post(
-			$url,
-			array(
-				'Content-Type' => 'application/json',
-				'Accept'       => 'application/json',
-			),
-			(string) wp_json_encode( $data )
-		);
-	}
-
-	/**
 	 * Sends a form-encoded POST request.
 	 *
 	 * @since 1.0.0

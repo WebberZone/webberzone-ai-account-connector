@@ -84,7 +84,7 @@ class Config {
 	public static function warning() {
 		return array(
 			__( 'This is not an official xAI integration. This plugin is independent and is not affiliated with, endorsed by or sponsored by xAI.', 'webberzone-ai-account-connector' ),
-			__( 'It signs in the way xAI\'s own command-line tools do, using their public client. That may break xAI\'s terms, and xAI may suspend or limit your account. xAI may also change or block it at any time.', 'webberzone-ai-account-connector' ),
+			__( 'xAI has no programme for third-party apps. This signs in the way xAI\'s own command-line tools do, using their public client. It may break xAI\'s terms, xAI may suspend or limit your account, and xAI may change or block it at any time. You use it entirely at your own risk.', 'webberzone-ai-account-connector' ),
 			__( 'Connect only if you are the administrator who will use it, on a site you control. The token is stored on this site, and other code running here, such as plugins and themes, can still use it while it is connected.', 'webberzone-ai-account-connector' ),
 		);
 	}

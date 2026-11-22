@@ -62,7 +62,7 @@ class OAuth extends OAuth_Client {
 	const REGISTRATION_CLIENT_ID = 'dynamic_agent_client';
 
 	/**
-	 * App name shown to the user on OpenAI's consent screen.
+	 * App name shown to the user on OpenAI's consent screen, followed by this site's title.
 	 *
 	 * @var string
 	 */
@@ -166,7 +166,7 @@ class OAuth extends OAuth_Client {
 						$query['login_hint'] = $saved['email'];
 					}
 				} else {
-					$query['agent_name_hint'] = self::AGENT_NAME;
+					$query['agent_name_hint'] = self::agent_name();
 				}
 
 				return array(
@@ -375,6 +375,18 @@ class OAuth extends OAuth_Client {
 		if ( ! in_array( self::REQUIRED_SCOPE, preg_split( '/\s+/', trim( $scopes, " \n\r\t\v\0" ) ), true ) ) {
 			throw new RuntimeException( esc_html__( 'OpenAI did not grant ChatGPT plan usage. Your plan may not support it.', 'webberzone-ai-account-connector' ), 0 );
 		}
+	}
+
+	/**
+	 * Returns the app name with this site's title, so the user can tell their sites apart in ChatGPT.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	private static function agent_name() {
+		$site = wp_html_excerpt( wp_strip_all_tags( (string) get_option( 'blogname' ) ), 60 );
+		return '' === $site ? self::AGENT_NAME : self::AGENT_NAME . ' (' . $site . ')';
 	}
 
 	/**

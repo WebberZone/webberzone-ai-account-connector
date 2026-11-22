@@ -2,7 +2,7 @@
 
 Connect your ChatGPT and Grok accounts to the WordPress AI Client from **Settings → Connectors**. Once linked, those accounts can power text generation (ChatGPT) and text and image generation (Grok). No API key is needed.
 
-> **Read this first.** A provider may change or block this at any time. Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in, so use the plugin on sites you control. Do not use one person's subscription for other people's requests; OpenAI's terms forbid it.
+> **Read this first.** A provider may change or block this at any time. Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in, so use the plugin on sites you control. Grok has no official programme for this, so use it entirely at your own risk. Do not use one person's subscription for other people's requests; OpenAI's terms forbid it.
 
 > **Not affiliated.** This is an independent project by WebberZone. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI. Grok is a trademark of xAI. The names are used only to describe which accounts the plugin works with.
 

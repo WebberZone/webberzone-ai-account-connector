@@ -17,7 +17,7 @@ toc: true
 
 ChatGPT uses OpenAI's [Sign in with ChatGPT](https://openai.com/policies/sign-in-with-chatgpt-terms/) for open-source apps: OAuth authorization code with PKCE and dynamic client registration.
 
-1. Your site creates a one-time PKCE challenge and a random per-site host ID, and shows a link to OpenAI's authorization page. On your first sign-in OpenAI registers the app (named WebberZone AI Account Connector) and issues a client ID. The plugin keeps that ID after you disconnect and reuses it when you sign in again, as OpenAI recommends, and removes it when you delete the plugin.
+1. Your site creates a one-time PKCE challenge and a random per-site host ID, and shows a link to OpenAI's authorization page. On your first sign-in OpenAI registers the app (named WebberZone AI Account Connector followed by your site's title, which you can edit before approving) and issues a client ID. The plugin keeps that ID after you disconnect and reuses it when you sign in again, as OpenAI recommends, and removes it when you delete the plugin.
 2. You approve access. OpenAI redirects the browser to `http://127.0.0.1:1455/auth/callback`. Nothing listens there on your computer, so the page does not load, but the address carries the authorization code.
 3. You paste that address into WordPress. The plugin checks the `state`, the granted scopes and the ID token, then exchanges the code for tokens from your server. The PKCE verifier never leaves your site.
 
@@ -25,7 +25,7 @@ Requests go to OpenAI's public Responses API at `api.openai.com/v1` with your ac
 
 ### Grok
 
-xAI has no equivalent programme for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools: authorization code with PKCE against `auth.x.ai`. xAI only allows a loopback redirect that a WordPress site cannot receive, so xAI's consent page shows a one-time code instead. You paste it into WordPress, which exchanges it using the PKCE verifier kept on your server. The code is valid for 5 minutes.
+xAI has no equivalent programme for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools: authorization code with PKCE against `auth.x.ai`. xAI only allows a loopback redirect that a WordPress site cannot receive, so xAI's consent page shows a one-time code instead. You paste it into WordPress, which exchanges it using the PKCE verifier kept on your server. The code is valid for 5 minutes. This is not an official xAI programme, so use it entirely at your own risk.
 
 ### Both
 

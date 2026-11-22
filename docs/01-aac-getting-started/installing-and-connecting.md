@@ -37,7 +37,7 @@ Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because t
 
 ## Before You Connect
 
-Every connect dialog opens with a warning that you must accept before anything starts. It says that this plugin is independent and not an official OpenAI or xAI integration, that connecting this way may break the provider's terms and the provider may restrict or suspend your account, and that other code running on your site, such as plugins and themes, can still use the token while it is connected. Connect only if you are the administrator who will use it, on a site you control.
+Every connect dialog opens with a warning that you must accept before anything starts. It says that this plugin is independent and not an official OpenAI or xAI integration, that connecting this way may break the provider's terms and the provider may restrict or suspend your account, and that other code running on your site, such as plugins and themes, can still use the token while it is connected. Connect only if you are the administrator who will use it, on a site you control. Grok in particular has no official xAI programme, so it is entirely at your own risk.
 
 ## Connect ChatGPT
 
