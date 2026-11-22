@@ -12,8 +12,5 @@
 /build/
 .phpunit.result.cache
 
-# Lock files
-composer.lock
-
 # Claude AI
 .claude/

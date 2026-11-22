@@ -1,21 +1,18 @@
-# GitHub Action: whenever creating a new release of the source code,
-# also create a release of the installable plugin.
-# Steps to execute:
-# - Checkout the source code
-# - Run "composer install" to download all dependencies under vendor/
-# - Create a .zip file, excluding:
-#   - All hidden files (.git, .gitignore, etc)
-#   - All development files, ending in .dist
-#   - All composer files <= after installing dependencies, no need for them anymore
-#   - Markdown files concerning development
-#   - Folder build/ <= created only to store the .zip file
-#   - Folder phpunit/ <= not needed for the plugin
-# - Upload the .zip file as an artifact to the action (this step is possibly optional)
-# - Upload the .zip file as a release, for download
+# Build the installable plugin zip and attach it when a version tag is pushed.
+# New releases are drafted, the zip is uploaded, then the release is published.
+# workflow_dispatch can retry a draft release after upload.
 name: Generate Installable Plugin, and Upload as Release Asset
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
+      - '[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to attach the installable zip to (draft retry)'
+        required: true
+        type: string
 permissions:
   contents: write
 jobs:
@@ -26,9 +23,52 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v4
+
       - name: Create artifact
         run: composer zip
-      - name: Upload to release
-        uses: softprops/action-gh-release@v3
-        with:
-          files: build/${{ github.event.repository.name }}.zip
+
+      - name: Publish release with asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          set -euo pipefail
+          TAG="${INPUT_TAG:-${GITHUB_REF#refs/tags/}}"
+          ZIP="build/webberzone-ai-account-connector.zip"
+          ASSET="webberzone-ai-account-connector.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "Missing $ZIP" >&2
+            exit 1
+          fi
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            DRAFT="$(gh release view "$TAG" --json isDraft -q .isDraft)"
+            if [ "$DRAFT" = "true" ]; then
+              gh release upload "$TAG" "$ZIP" --clobber
+              gh release edit "$TAG" --draft=false
+              echo "Uploaded $ASSET and published draft $TAG."
+              exit 0
+            fi
+            if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Fxq "$ASSET"; then
+              echo "$TAG already has $ASSET; leaving published release intact."
+              exit 0
+            fi
+            gh release upload "$TAG" "$ZIP" --clobber
+            echo "Published $TAG was missing $ASSET; uploaded."
+            exit 0
+          fi
+
+          gh release create "$TAG" --draft --title "$TAG" --generate-notes
+          gh release upload "$TAG" "$ZIP" --clobber
+          gh release edit "$TAG" --draft=false
+          echo "Created, uploaded, and published $TAG."

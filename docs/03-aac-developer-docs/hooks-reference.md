@@ -89,6 +89,25 @@ Filters the Grok models offered when the live model list cannot be fetched.
 
 **Returns:** `array`: The models.
 
+### `wzap_enable_update_checks( $enabled )`
+
+Filters whether the plugin checks GitHub for updates from published releases.
+
+```php
+add_filter(
+	'wzap_enable_update_checks',
+	'__return_false'
+);
+```
+
+**Parameters:**
+
+- `$enabled` *(bool)*: Whether update checks run. Default `true`.
+
+**Returns:** `bool`: Whether to check for updates.
+
+When enabled, the site contacts api.github.com. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent.
+
 ## Filters the Plugin Hooks Into
 
 For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`. For Grok it also returns `true` from `wpai_has_image_generation_support`, because ChatGPT does not support image generation. The WordPress AI plugin uses these to know what is available.

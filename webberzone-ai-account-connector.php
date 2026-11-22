@@ -7,6 +7,7 @@
  * Author URI: https://webberzone.com
  * Requires at least: 7.0
  * Requires PHP: 7.4
+ * Update URI: https://github.com/WebberZone/webberzone-ai-account-connector
  * License: GPL-2.0-or-later
  * Text Domain: webberzone-ai-account-connector
  *
@@ -34,6 +35,28 @@ spl_autoload_register(
 		}
 	}
 );
+
+if ( apply_filters( 'wzap_enable_update_checks', true ) && is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+	$update_checker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+		'https://github.com/WebberZone/webberzone-ai-account-connector',
+		__FILE__,
+		'webberzone-ai-account-connector'
+	);
+	$github_api     = $update_checker->getVcsApi();
+	if ( method_exists( $github_api, 'enableReleaseAssets' ) ) {
+		$github_api->enableReleaseAssets(
+			'/^webberzone-ai-account-connector\.zip$/',
+			\YahnisElsts\PluginUpdateChecker\v5p7\Vcs\Api::REQUIRE_RELEASE_ASSETS
+		);
+	}
+	add_filter(
+		'puc_vcs_update_detection_strategies-' . MODULE,
+		static function ( $strategies ) {
+			return array_intersect_key( $strategies, array( 'latest_release' => true ) );
+		}
+	);
+}
 
 require_once __DIR__ . '/includes/chatgpt/provider.php';
 require_once __DIR__ . '/includes/grok/provider.php';
