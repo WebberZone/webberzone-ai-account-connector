@@ -14,7 +14,7 @@ Keep the ChatGPT and Grok provider IDs and the OAuth client configuration stable
 ## Docs and site
 
 - `docs/*.md` are edited directly, in the folders `01-aac-getting-started`, `02-aac-advanced` and `03-aac-developer-docs`.
-- The GitHub Pages homepage is `index.md` with `_config.yml`, `_layouts`, `_includes` and `site-assets`. Pages excludes `docs/`.
+- The GitHub Pages homepage is `index.md` with `_config.yml`, `_layouts`, `_includes` and `site-assets`. Jekyll renders `docs/` with the `doc` layout and a shared sidebar.
 
 ## Asset builds
 

@@ -1,0 +1,17 @@
+<nav class="docs-sidebar" aria-label="Documentation">
+  <a href="{{ '/docs/' | relative_url }}"{% if page.url == '/docs/' %} aria-current="page"{% endif %}>Documentation home</a>
+  {% assign articles = site.pages | where: 'layout', 'doc' | where_exp: 'doc', "doc.url != '/docs/'" | sort: 'path' %}
+  {% assign sections = "01-aac-getting-started|02-aac-advanced|03-aac-developer-docs" | split: "|" %}
+  {% assign labels = "Getting started|Advanced|Developer reference" | split: "|" %}
+  {% for section in sections %}
+    {% assign section_articles = articles | where_exp: 'doc', "doc.path contains section" | sort: 'order' %}
+    {% if section_articles.size > 0 %}
+      <h2>{{ labels[forloop.index0] }}</h2>
+      <ul>
+        {% for doc in section_articles %}
+          <li><a href="{{ doc.url | relative_url }}"{% if doc.url == page.url %} aria-current="page"{% endif %}>{{ doc.title | escape }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endfor %}
+</nav>
