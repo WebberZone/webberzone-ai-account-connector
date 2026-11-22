@@ -6,16 +6,16 @@ sections: ["02-aac-advanced"]
 tags: [ai-account-connector, troubleshooting]
 status: publish
 order: 1
-toc: true
 ---
 
-[toc]
+[kbtoc]
 
 Fixes for the messages [WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) can show while you sign in or generate content.
 
 | Symptom | Cause and fix |
 |---|---|
 | No ChatGPT card, or a notice about AI Provider for OpenAI | The ChatGPT connector needs a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). Install and activate it. |
+| No update appears although a newer release exists on GitHub | Updates use published GitHub releases that include a `webberzone-ai-account-connector.zip` asset. Confirm the release is published, not draft only. If you disabled checks with `wzaiac_enable_update_checks`, turn them back on or install manually from the releases page. |
 | "The sign-in expired. Start again." | A sign-in is valid for 15 minutes with ChatGPT and 30 minutes with Grok. Choose **Try again** to start a new one. |
 | "The sign-in was declined." (Grok) | You chose to deny access on xAI's page. Choose **Try again** and approve. |
 | The code on xAI's page does not match the dialog (Grok) | Each attempt has its own code, so the xAI page is from an earlier attempt. Close it, choose **Try again** and use the page that opens. |

@@ -6,10 +6,9 @@ sections: ["02-aac-advanced"]
 tags: [ai-account-connector, oauth, security]
 status: publish
 order: 0
-toc: true
 ---
 
-[toc]
+[kbtoc]
 
 [WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) signs in through each provider's consent screen, stores the tokens encrypted on your site and refreshes them automatically.
 

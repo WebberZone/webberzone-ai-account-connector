@@ -6,16 +6,13 @@ sections: ["01-aac-getting-started"]
 tags: [ai-account-connector, chatgpt, grok, installation]
 status: publish
 order: 0
-toc: true
 ---
 
-[toc]
+[kbtoc]
 
 [WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) lets you sign in with your existing ChatGPT and Grok accounts from **Settings → Connectors**, so the WordPress AI Client can use them for text generation (ChatGPT) and text and image generation (Grok). No API key is needed.
 
 The plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI, and Grok is a trademark of xAI. The names describe which accounts the plugin works with.
-
----
 
 ## Requirements
 
@@ -25,15 +22,26 @@ The plugin is independent and is not affiliated with, endorsed by, or sponsored 
 
 Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because the connector builds on its request and response handling.
 
----
-
 ## Install the Plugin
 
-1. Download the latest release ZIP.
+1. Download `webberzone-ai-account-connector.zip` from the [releases page](https://github.com/WebberZone/webberzone-ai-account-connector/releases) on GitHub.
 2. Go to **Plugins → Add New → Upload Plugin**, upload the ZIP, and activate it.
 3. If you want ChatGPT, install and activate **AI Provider for OpenAI** as well.
 
----
+The plugin is not on WordPress.org. GitHub releases are the supported distribution path.
+
+## Updates from GitHub
+
+When a newer published release appears on GitHub, WordPress lists it on **Plugins → Installed Plugins** like any other update. Choose **Update now** to install it.
+
+The update check contacts GitHub only. It does not send site content or account credentials. WordPress may include your site URL in the HTTP User-Agent. To turn checks off, return false from the `wzaiac_enable_update_checks` filter. See [Hooks and internals]({{ '/docs/03-aac-developer-docs/hooks-reference/' | relative_url }}) for an example.
+
+## What the Connectors Support
+
+- Embeddings and text-to-speech are not available through an account sign-in. Use the provider's API key for those features.
+- ChatGPT supports **text generation only**. It does not support image generation. Sampling options such as `temperature` may be accepted by calling code but are dropped before the request is sent, because OpenAI rejects them on this API path.
+- Grok supports text and image generation. Images from Grok Imagine are JPEG files produced from a text prompt.
+- ChatGPT usage counts against your ChatGPT plan limits, which are shared with your other apps.
 
 ## Before You Connect
 
@@ -58,8 +66,6 @@ The sign-in is valid for up to 15 minutes. The ChatGPT connector supports text g
 5. Check that the code on xAI's page matches the one in the dialog, then approve. The dialog connects on its own, so there is nothing to copy. The code is valid for 30 minutes.
 
 Some plans can sign in but are refused by the xAI API. If that happens, the error appears when you generate content.
-
----
 
 ## Allow Other Plugins to Use the Account
 

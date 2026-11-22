@@ -24,7 +24,7 @@ permalink: /
   <div class="feature-grid">
     <div class="feature-card">
       <h3>Sign in once</h3>
-      <p>Approve access on the provider's page, then, for ChatGPT, paste back the address your browser ends up on. Grok connects on its own once you enter its code. Every connect dialog starts with a warning you must accept. Tokens are stored encrypted and refreshed automatically.</p>
+      <p>Approve access on the provider's page, then, for ChatGPT, paste back the address your browser ends up on. For Grok, check that the code on xAI's page matches the dialog and approve; WordPress connects on its own. Every connect dialog starts with a warning you must accept. Tokens are stored encrypted and refreshed automatically.</p>
     </div>
     <div class="feature-card">
       <h3>Text generation</h3>
@@ -44,9 +44,9 @@ permalink: /
   <h2 class="section-title" style="margin-bottom:8px;">How it works, and the risk</h2>
   <div class="callout">
     <h3>Not an official OpenAI or xAI integration</h3>
-    <p>This plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI and Grok is a trademark of xAI; the names only describe which accounts it works with. ChatGPT uses OpenAI's official <a href="https://openai.com/policies/sign-in-with-chatgpt-terms/" target="_blank">Sign in with ChatGPT</a> for open-source apps and OpenAI's public Responses API. That programme is a preview and its terms may not cover every kind of hosted site. xAI has no equivalent programme, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools and signs in through xAI's consent screen, with a pasted code. WebberZone has no application of its own registered with either provider (with ChatGPT, each site registers itself with OpenAI as WebberZone AI Account Connector). Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts.</p>
+    <p>This plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI and Grok is a trademark of xAI; the names only describe which accounts it works with. ChatGPT uses OpenAI's official <a href="https://openai.com/policies/sign-in-with-chatgpt-terms/" target="_blank">Sign in with ChatGPT</a> for open-source apps and OpenAI's public Responses API. That program is a preview and its terms may not cover every kind of hosted site. xAI has no equivalent program, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools and signs in through xAI's consent screen via the device authorization flow. Nothing is pasted back into WordPress for Grok. WebberZone has no application of its own registered with either provider (with ChatGPT, each site registers itself with OpenAI as WebberZone AI Account Connector). Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts.</p>
     <ul>
-      <li>A provider may change or block this at any time. xAI has no official programme for this, so Grok is entirely at your own risk.</li>
+      <li>A provider may change or block this at any time. xAI has no official program for this, so Grok is entirely at your own risk.</li>
       <li>Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Check the terms yourself.</li>
       <li>Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in. Use it on sites you control, and do not use one person's subscription for other people's requests, which OpenAI's terms forbid.</li>
     </ul>
@@ -60,7 +60,7 @@ permalink: /
   <ol class="step-list">
     <li>
       <h3>Install this plugin</h3>
-      <p>When a release is available, download the plugin ZIP from <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank">GitHub Releases</a>, then upload and activate it under Plugins → Add New → Upload Plugin.</p>
+      <p>When a release is available, download <code>webberzone-ai-account-connector.zip</code> from <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank">GitHub Releases</a>, then upload and activate it under Plugins → Add New → Upload Plugin. Newer releases also appear on the Plugins screen when GitHub publishes an update.</p>
     </li>
     <li>
       <h3>For ChatGPT: add AI Provider for OpenAI</h3>

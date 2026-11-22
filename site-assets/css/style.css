@@ -311,6 +311,23 @@ footer a:hover { color: var(--wz-off-white); }
   color: var(--wz-teal-text);
 }
 .docs-sidebar a[aria-current="page"] { font-weight: 700; }
+.kbtoc {
+  margin: 0 0 28px;
+  padding: 16px 18px;
+  border: 1px solid var(--wz-border, #e5e2dd);
+  border-radius: 8px;
+  background: var(--wz-stone);
+}
+.kbtoc strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--wz-warm-grey);
+}
+.kbtoc ul { list-style: none; padding: 0; margin: 0; columns: 2; }
+.kbtoc a { font-size: .86rem; text-decoration: none; }
 .docs-content { overflow-wrap: anywhere; }
 .docs-content h1 { margin-bottom: 24px; }
 .docs-content table { display: block; overflow-x: auto; }

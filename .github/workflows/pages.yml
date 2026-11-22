@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - '_config.yml'
+      - '_plugins/**'
       - '_layouts/**'
       - '_includes/**'
       - 'site-assets/**'

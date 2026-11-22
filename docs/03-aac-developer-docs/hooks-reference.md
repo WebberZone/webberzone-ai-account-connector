@@ -6,10 +6,9 @@ sections: ["03-aac-developer-docs"]
 tags: [ai-account-connector, developer, hooks]
 status: publish
 order: 0
-toc: true
 ---
 
-[toc]
+[kbtoc]
 
 [WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) registers two providers with the WordPress AI Client and exposes a small set of filters, options and AJAX actions.
 
@@ -108,6 +107,8 @@ add_filter(
 
 When enabled, the site contacts api.github.com. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent.
 
+The updater loads only when `vendor/autoload.php` is present in the installed copy (the distribution ZIP includes it). It uses Plugin Update Checker against `https://github.com/WebberZone/webberzone-ai-account-connector`, requires a release asset named `webberzone-ai-account-connector.zip`, and limits detection to the `latest_release` strategy through the `puc_vcs_update_detection_strategies-webberzone-ai-account-connector` filter.
+
 ## Filters the Plugin Hooks Into
 
 For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`. For Grok it also returns `true` from `wpai_has_image_generation_support`, because ChatGPT does not support image generation. The WordPress AI plugin uses these to know what is available.
@@ -139,6 +140,16 @@ Each provider registers five `wp_ajax_` actions, where the prefix is `wzaiac_cha
 | `{prefix}_disconnect` | Removes the stored tokens and asks the provider to revoke the sign-in. |
 
 Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability.
+
+## Provider Registration
+
+On `init` priority 6 each built-in provider calls `register_provider()` with the WordPress AI Client. On `init` priority 30 it calls `attach_authentication()` so authentication wiring runs after core connector setup.
+
+If the standalone plugin `WebberZone\ChatGPT_Account` or `WebberZone\Grok_Account` is already loaded and defines `register_provider()`, this plugin skips that provider so the standalone copy owns registration.
+
+## ChatGPT Request Shaping
+
+ChatGPT text generation uses OpenAI's Responses API with streaming enabled. Before the request is sent, the model drops unsupported parameters, including `temperature`, `top_p`, and `max_output_tokens`, because OpenAI rejects them on this account-backed path. Fallback model lists and timeout filters above still apply.
 
 ## Layout
 
