@@ -42,9 +42,21 @@ The update check contacts GitHub only. It does not send site content or account 
 ## What the Connectors Support
 
 - Embeddings and text-to-speech are not available through an account sign-in. Use the provider's API key for those features.
-- ChatGPT supports **text generation only**. It does not support image generation. Sampling options such as `temperature` may be accepted by calling code but are dropped before the request is sent, because OpenAI rejects them on this API path.
+- ChatGPT supports **text generation only**. See **Generating images** below for what to use when you need pictures.
 - Grok supports text and image generation. Images from Grok Imagine are JPEG files produced from a text prompt.
 - ChatGPT usage counts against your ChatGPT plan limits, which are shared with your other apps.
+
+## Generating images
+
+Sign in with ChatGPT is for **text** through the Responses API. OpenAI's [Sign in with ChatGPT preview limitations](https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations) list image generation as an unsupported tool on that path. Calls such as the Images API return an authorization error, so this connector does not advertise image models for ChatGPT.
+
+| What you need | What to set up |
+|---|---|
+| Images from your xAI plan, no API key | Connect **Grok Account** and choose a Grok image model in the AI Client. |
+| Images from OpenAI billing (DALL·E, GPT Image, etc.) | Install a provider that uses an **OpenAI API key**, such as [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). That is separate from ChatGPT Account. |
+| ChatGPT plan text in WordPress | Connect **ChatGPT Account** only. Keep Grok or an API key provider for images on the same site if you need both. |
+
+You can connect ChatGPT and Grok together. Each provider has its own card on **Settings → Connectors**. Approve each account for the plugins that should use it.
 
 ## Before You Connect
 

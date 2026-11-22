@@ -22,7 +22,7 @@ ChatGPT uses OpenAI's [Sign in with ChatGPT](https://openai.com/policies/sign-in
 2. You approve access. OpenAI redirects the browser to `http://127.0.0.1:1455/auth/callback`. Nothing listens there on your computer, so the page does not load, but the address carries the authorization code.
 3. You paste that address into WordPress. The plugin checks the `state`, the granted scopes and the ID token, then exchanges the code for tokens from your server. The PKCE verifier never leaves your site.
 
-Requests go to OpenAI's public Responses API at `api.openai.com/v1` with your access token. This path supports text generation only. OpenAI's program is a preview, and its terms may not cover every kind of hosted site, so check the terms.
+Requests go to OpenAI's public Responses API at `api.openai.com/v1` with your access token. This path supports text generation only. The same account token cannot call the Images API; attempts return an authorization error. See OpenAI's [Sign in with ChatGPT preview limitations](https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations). OpenAI's program is a preview, and its terms may not cover every kind of hosted site, so check the terms.
 
 ### Grok
 
@@ -65,4 +65,4 @@ For Grok, revocation ends the refresh token only. xAI may accept the access toke
 
 The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzaiac_enable_update_checks` filter to turn this off.
 
-Generation requests can include prompts, images, and generation settings from the WordPress feature making the request.
+ChatGPT generation requests send text prompts and settings from the calling feature. Grok may also send image generation prompts or image inputs where its models allow. The connector does not register image generation for ChatGPT, so the AI Client does not offer ChatGPT for image tasks.

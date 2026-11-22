@@ -95,7 +95,7 @@ permalink: /
 <div class="home-section" style="padding-top:0;">
   <div class="eyebrow">Limits</div>
   <h2 class="section-title" style="margin-bottom:8px;">What it doesn't do</h2>
-  <p style="color:var(--wz-warm-grey); max-width:64ch;">Embeddings and text-to-speech aren't available through an account sign-in; use the provider's API key for those. A ChatGPT plan sign-in supports text generation only: no image generation, and sampling options such as temperature are accepted but ignored because OpenAI rejects them. ChatGPT usage counts against your plan's limits.</p>
+  <p style="color:var(--wz-warm-grey); max-width:64ch;">Embeddings and text-to-speech aren't available through an account sign-in; use the provider's API key for those. A ChatGPT plan sign-in is <strong>text only</strong> (<a href="https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations" target="_blank">OpenAI preview limitations</a>). For images without an OpenAI API key, use <strong>Grok Account</strong>; see <a href="{{ '/docs/01-aac-getting-started/installing-and-connecting/#generating-images' | relative_url }}">Generating images</a> in the docs. Sampling options such as temperature on ChatGPT are accepted but ignored. Usage counts against your plan limits.</p>
 </div>
 
 <div class="home-section" style="padding-top:0;">

@@ -111,7 +111,7 @@ The updater loads only when `vendor/autoload.php` is present in the installed co
 
 ## Filters the Plugin Hooks Into
 
-For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`. For Grok it also returns `true` from `wpai_has_image_generation_support`, because ChatGPT does not support image generation. The WordPress AI plugin uses these to know what is available.
+For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`. Only Grok registers `report_image_support()` on `wpai_has_image_generation_support`. ChatGPT omits that hook because Sign in with ChatGPT tokens are not authorized for image generation APIs. The WordPress AI plugin uses these to know what is available.
 
 ## Storage
 

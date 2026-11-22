@@ -6,6 +6,7 @@
 
 * Simplified how the ChatGPT connector processes prompts, streamed results, and tool calls.
 * New ChatGPT connection requests display the site URL so you can tell sites apart.
+* New **Generating images** section in the docs: Grok or an OpenAI API key for pictures; ChatGPT Account stays text-only per OpenAI's Sign in with ChatGPT preview limitations.
 
 = 1.0.1 =
 
