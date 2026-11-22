@@ -105,12 +105,21 @@ class OAuth extends OAuth_Client {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  string $code Authorization code copied from the consent screen.
+	 * @param  string $code Authorization code copied from the consent screen, or the address the browser was sent to.
 	 * @return string 'connected'.
 	 * @throws RuntimeException When the attempt expired, the code was rejected, or the response was incomplete.
 	 */
 	public static function exchange_authorization_code( $code ) {
-		$code = preg_replace( '/\s+/', '', (string) $code );
+		$code = (string) $code;
+		// When the browser cannot load the loopback redirect, its address carries the code; accept that as well as the bare code.
+		if ( false !== strpos( $code, 'code=' ) ) {
+			parse_str( false !== strpos( $code, '?' ) ? (string) wp_parse_url( $code, PHP_URL_QUERY ) : ltrim( $code, '?' ), $params );
+			if ( ! empty( $params['error'] ) ) {
+				throw new RuntimeException( esc_html__( 'xAI did not grant access. Start again and approve access.', 'webberzone-ai-account-connector' ) );
+			}
+			$code = (string) ( $params['code'] ?? '' );
+		}
+		$code = preg_replace( '/\s+/', '', $code );
 		if ( ! is_string( $code ) || '' === $code || strlen( $code ) > 2048 ) {
 			throw new RuntimeException( esc_html__( 'Paste the code shown on the xAI sign-in page.', 'webberzone-ai-account-connector' ) );
 		}

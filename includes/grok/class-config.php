@@ -71,7 +71,7 @@ class Config {
 	 * @return string
 	 */
 	public static function browser_paste() {
-		return __( '2. That page cannot return here, so it shows a one-time code (it may say to copy it into Grok Build). Paste the code below. It is valid for 5 minutes.', 'webberzone-ai-account-connector' );
+		return __( '2. That page cannot return here, so it shows a one-time code (it may say to copy it into Grok Build), or your browser shows an error page at an address starting with http://127.0.0.1:56121. Paste the code or that whole address below. It is valid for 5 minutes.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Config {
 	 * @return string
 	 */
 	public static function paste_label() {
-		return __( 'Sign-in code', 'webberzone-ai-account-connector' );
+		return __( 'Sign-in code or address', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -130,7 +130,7 @@ class Config {
 	 * @return string
 	 */
 	public static function expect() {
-		return __( 'After approving access, xAI shows a one-time code. Copy it, return here, and paste it below.', 'webberzone-ai-account-connector' );
+		return __( 'xAI\'s page will say \'Authorize Grok Build\', because this plugin uses the public Grok Build login rather than an app registered for WebberZone. After approving access, xAI shows a one-time code, or your browser shows \'This site can\'t be reached.\' at an address starting with http://127.0.0.1:56121. Copy the code or that address, return here, and paste it below.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
