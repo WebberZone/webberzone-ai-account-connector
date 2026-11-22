@@ -4,7 +4,7 @@ Tags: ai, connectors, chatgpt, grok
 Requires at least: 7.0
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,9 +64,6 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 * The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzap_enable_update_checks` filter to turn this off.
 
 == Changelog ==
-
-= 1.0.1 =
-* Confirms GitHub release updates against the production repository.
 
 = 1.0.0 =
 * Automatic updates from GitHub releases when a newer version is published.

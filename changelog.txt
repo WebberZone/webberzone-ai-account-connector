@@ -1,11 +1,5 @@
 == Changelog ==
 
-= 1.0.1 =
-
-**Changed**
-
-* Confirms GitHub release updates against the production repository.
-
 = 1.0.0 =
 
 **Added**
