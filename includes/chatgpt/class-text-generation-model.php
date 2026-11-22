@@ -180,26 +180,20 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	}
 
 	/**
-	 * Collapses the server-sent event stream into a single Responses API JSON response.
+	 * Collapses the server-sent event stream into a Responses API response.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param  Response $response Streamed response.
-	 * @return Response
+	 * @return array
 	 * @throws RuntimeException When the stream reports an error or never completes.
 	 */
-	private function parse_stream( Response $response ) {
-		$final = null;
-		$items = array();
+	private function parse_stream( Response $response ): array {
+		$final_response = null;
+		$items          = array();
 
 		foreach ( (array) preg_split( "/\r?\n\r?\n/", (string) $response->getBody() ) as $event ) {
-			$data = array();
-			foreach ( (array) preg_split( "/\r?\n/", (string) $event ) as $line ) {
-				if ( 0 === strncmp( (string) $line, 'data:', 5 ) ) {
-					$data[] = ltrim( substr( (string) $line, 5 ), ' ' );
-				}
-			}
-			$payload = json_decode( implode( "\n", $data ), true );
+			$payload = $this->decode_stream_event( $event );
 			if ( ! is_array( $payload ) ) {
 				continue;
 			}
@@ -208,27 +202,66 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 			if ( 'response.output_item.done' === $type && is_array( $payload['item'] ?? null ) ) {
 				$items[] = $payload['item'];
 			} elseif ( in_array( $type, array( 'response.completed', 'response.incomplete' ), true ) && is_array( $payload['response'] ?? null ) ) {
-				$final = $payload['response'];
+				$final_response = $payload['response'];
 			} elseif ( in_array( $type, array( 'response.failed', 'error' ), true ) ) {
-				$error = $payload['response']['error'] ?? ( $payload['error'] ?? $payload );
-				$code  = is_array( $error ) ? (string) ( $error['code'] ?? '' ) : '';
-				if ( 'subscription_sharing_usage_limit_exceeded' === $code ) {
-					throw new RuntimeException( esc_html__( 'Your ChatGPT plan usage limit has been reached. Wait for it to reset, or check your usage in ChatGPT settings.', 'webberzone-ai-account-connector' ) );
-				}
-				/* translators: 1: error code, 2: error message. */
-				throw new RuntimeException( esc_html( sprintf( __( 'ChatGPT error (%1$s): %2$s', 'webberzone-ai-account-connector' ), '' !== $code ? $code : 'unknown', is_array( $error ) ? ( $error['message'] ?? wp_json_encode( $error ) ) : (string) $error ) ) );
+				throw $this->stream_error( $payload ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- The exception message is escaped in stream_error().
 			}
 		}
 
-		if ( null === $final ) {
+		return $this->complete_stream_response( $final_response, $items );
+	}
+
+	/**
+	 * Completes the response with any output items delivered separately.
+	 *
+	 * @param array|null $final_response Final response.
+	 * @param array      $items Output items from individual events.
+	 * @return array
+	 * @throws RuntimeException When the stream never completes.
+	 */
+	private function complete_stream_response( ?array $final_response, array $items ): array {
+		if ( null === $final_response ) {
 			throw new RuntimeException( esc_html__( 'ChatGPT stream ended without a completed response.', 'webberzone-ai-account-connector' ) );
 		}
 		// Output items stream individually and response.completed's output may be empty.
-		if ( empty( $final['output'] ) && $items ) {
-			$final['output'] = $items;
+		if ( empty( $final_response['output'] ) && $items ) {
+			$final_response['output'] = $items;
 		}
 
-		return new Response( 200, array( 'Content-Type' => array( 'application/json' ) ), (string) wp_json_encode( $final ) );
+		return $final_response;
+	}
+
+	/**
+	 * Decodes the data lines of one server-sent event.
+	 *
+	 * @param string $event Server-sent event.
+	 * @return array|null
+	 */
+	private function decode_stream_event( string $event ): ?array {
+		$data = array();
+		foreach ( (array) preg_split( "/\r?\n/", (string) $event ) as $line ) {
+			if ( 0 === strncmp( (string) $line, 'data:', 5 ) ) {
+				$data[] = ltrim( substr( (string) $line, 5 ), ' ' );
+			}
+		}
+		$payload = json_decode( implode( "\n", $data ), true );
+		return is_array( $payload ) ? $payload : null;
+	}
+
+	/**
+	 * Builds the exception reported by a streamed error event.
+	 *
+	 * @param array $payload Streamed error event.
+	 * @return RuntimeException
+	 */
+	private function stream_error( array $payload ): RuntimeException {
+		$error = $payload['response']['error'] ?? ( $payload['error'] ?? $payload );
+		$code  = is_array( $error ) ? (string) ( $error['code'] ?? '' ) : '';
+		if ( 'subscription_sharing_usage_limit_exceeded' === $code ) {
+			return new RuntimeException( esc_html__( 'Your ChatGPT plan usage limit has been reached. Wait for it to reset, or check your usage in ChatGPT settings.', 'webberzone-ai-account-connector' ) );
+		}
+		/* translators: 1: error code, 2: error message. */
+		return new RuntimeException( esc_html( sprintf( __( 'ChatGPT error (%1$s): %2$s', 'webberzone-ai-account-connector' ), '' !== $code ? $code : 'unknown', is_array( $error ) ? ( $error['message'] ?? wp_json_encode( $error ) ) : (string) $error ) ) );
 	}
 
 	/**

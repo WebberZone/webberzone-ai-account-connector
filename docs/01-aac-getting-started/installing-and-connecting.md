@@ -27,6 +27,12 @@ The plugin is independent and is not affiliated with, endorsed by, or sponsored 
 
 The plugin is not on WordPress.org. GitHub releases are the supported distribution path.
 
+ChatGPT and Grok both register through this plugin alone. You do not need to install [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/) for ChatGPT.
+
+## Upgrading from 1.0.0
+
+Version 1.0.1 removes the ChatGPT dependency on AI Provider for OpenAI. Update the connector from **Plugins → Installed Plugins** or by uploading a newer ZIP. Your existing ChatGPT and Grok connections stay in place. You may uninstall AI Provider for OpenAI if you installed it only for this connector.
+
 ## Updates from GitHub
 
 When a newer published release appears on GitHub, WordPress lists it on **Plugins → Installed Plugins** like any other update. Choose **Update now** to install it.

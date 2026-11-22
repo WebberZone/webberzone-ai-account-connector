@@ -17,7 +17,6 @@ use WordPress\AiClient\Messages\DTO\MessagePart;
 use WordPress\AiClient\Messages\Enums\MessagePartChannelEnum;
 use WordPress\AiClient\Messages\Enums\MessageRoleEnum;
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiBasedModel;
-use WordPress\AiClient\Providers\Http\DTO\Response;
 use WordPress\AiClient\Providers\Http\Exception\ResponseException;
 use WordPress\AiClient\Results\DTO\Candidate;
 use WordPress\AiClient\Results\DTO\GenerativeAiResult;
@@ -75,32 +74,20 @@ class Responses_Mapper extends AbstractApiBasedModel {
 			$params['instructions'] = $system_instruction;
 		}
 
-		$max_tokens = $config->getMaxTokens();
-		if ( null !== $max_tokens ) {
-			$params['max_output_tokens'] = $max_tokens;
-		}
-
-		$temperature = $config->getTemperature();
-		if ( null !== $temperature ) {
-			$params['temperature'] = $temperature;
-		}
-
-		$top_p = $config->getTopP();
-		if ( null !== $top_p ) {
-			$params['top_p'] = $top_p;
-		}
-
-		$logprobs = $config->getLogprobs();
-		if ( true === $logprobs ) {
+		$params += array_filter(
+			array(
+				'max_output_tokens' => $config->getMaxTokens(),
+				'temperature'       => $config->getTemperature(),
+				'top_p'             => $config->getTopP(),
+				'top_logprobs'      => $config->getTopLogprobs(),
+			),
+			static function ( $value ) {
+				return null !== $value;
+			}
+		);
+		if ( true === $config->getLogprobs() ) {
 			$params['include'] = array( 'message.output_text.logprobs' );
 		}
-
-		$top_logprobs = $config->getTopLogprobs();
-		if ( null !== $top_logprobs ) {
-			$params['top_logprobs'] = $top_logprobs;
-		}
-
-		// Note: OpenAI does not support top_k parameter.
 
 		$output_mime_type = $config->getOutputMimeType();
 		$output_schema    = $config->getOutputSchema();
@@ -201,179 +188,84 @@ class Responses_Mapper extends AbstractApiBasedModel {
 	}
 
 	/**
-	 * Prepares the input parameter for the API request.
-	 *
-	 * @since 1.0.1
+	 * Maps prompt parts in order, emitting thought items before their message.
 	 *
 	 * @param array $messages The messages to prepare.
-	 * @return list<array<string, mixed>> The prepared input parameter.
+	 * @return array
 	 */
 	protected function prepare_input_param( array $messages ): array {
-		$this->validate_messages( $messages );
-
 		$input = array();
 		foreach ( $messages as $message ) {
-			foreach ( $this->get_reasoning_input_items( $message ) as $reasoning_item ) {
-				$input[] = $reasoning_item;
+			$role    = $message->getRole();
+			$content = array();
+			foreach ( $message->getParts() as $part ) {
+				if ( $part->getChannel()->isThought() ) {
+					$reasoning = $this->get_reasoning_input_item( $part );
+					if ( null !== $reasoning ) {
+						$input[] = $reasoning;
+					}
+					continue;
+				}
+				$content[] = $this->get_message_part_data( $part, $role );
 			}
-			$input_item = $this->get_message_input_item( $message );
-			if ( null !== $input_item ) {
-				$input[] = $input_item;
+			if ( $content ) {
+				$input[] = $this->wrap_message_content( $content, $role );
 			}
 		}
 		return $input;
 	}
 
 	/**
-	 * Extracts top-level reasoning items from a message's thought-channel parts.
+	 * Restores a reasoning item from its thought signature.
 	 *
-	 * @since 1.2.0
-	 *
-	 * @param Message $message The message to inspect.
-	 * @return list<array<string, mixed>> Reasoning items to send as top-level input.
+	 * @param MessagePart $part Thought-channel part.
+	 * @return array|null
 	 */
-	protected function get_reasoning_input_items( Message $message ): array {
-		$items = array();
-		foreach ( $message->getParts() as $part ) {
-			if ( ! $part->getChannel()->isThought() ) {
-				continue;
-			}
-			$signature = $part->getThoughtSignature();
-			if ( ! is_string( $signature ) || '' === $signature ) {
-				continue;
-			}
-
-			$decoded = json_decode( $signature, true );
-			if (
-				! is_array( $decoded )
-				|| ! isset( $decoded['id'] )
-				|| ! is_string( $decoded['id'] )
-				|| '' === $decoded['id']
-			) {
-				continue;
-			}
-
-			$item = array(
-				'type' => 'reasoning',
-				'id'   => $decoded['id'],
-			);
-			if ( isset( $decoded['encrypted_content'] ) && is_string( $decoded['encrypted_content'] ) ) {
-				$item['encrypted_content'] = $decoded['encrypted_content'];
-			}
-			if ( isset( $decoded['summary'] ) && is_array( $decoded['summary'] ) ) {
-				$item['summary'] = $decoded['summary'];
-			} else {
-				$item['summary'] = array();
-			}
-			$items[] = $item;
+	private function get_reasoning_input_item( MessagePart $part ): ?array {
+		$signature = $part->getThoughtSignature();
+		if ( null === $signature || '' === $signature ) {
+			return null;
 		}
-		return $items;
-	}
-
-	/**
-	 * Validates that the messages are appropriate for the OpenAI Responses API.
-	 *
-	 * The OpenAI Responses API requires function calls and function responses to be
-	 * sent as top-level input items rather than nested in message content. As such,
-	 * they must be the only part in a message.
-	 *
-	 * Thought-channel parts are sent as separate top-level `reasoning` items
-	 * (see {@see self::get_reasoning_input_items()}) and skipped here.
-	 *
-	 * @since 1.0.1
-	 *
-	 * @param array $messages The messages to validate.
-	 * @return void
-	 * @throws InvalidArgumentException If validation fails.
-	 */
-	protected function validate_messages( array $messages ): void {
-		foreach ( $messages as $message ) {
-			$content_parts = array();
-			foreach ( $message->getParts() as $part ) {
-				if ( $part->getChannel()->isThought() ) {
-					continue;
-				}
-				$content_parts[] = $part;
-			}
-
-			if ( count( $content_parts ) <= 1 ) {
-				continue;
-			}
-
-			foreach ( $content_parts as $part ) {
-				$type = $part->getType();
-
-				if ( $type->isFunctionCall() ) {
-					throw new InvalidArgumentException(
-						'Function call parts must be the only part in a message for the OpenAI Responses API.'
-					);
-				}
-
-				if ( $type->isFunctionResponse() ) {
-					throw new InvalidArgumentException(
-						'Function response parts must be the only part in a message for the OpenAI Responses API.'
-					);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Converts a Message object to a Responses API input item.
-	 *
-	 * @since 1.0.1
-	 *
-	 * @param Message $message The message to convert.
-	 * @return array<string, mixed>|null The input item, or null if the message is empty.
-	 */
-	protected function get_message_input_item( Message $message ): ?array {
-		$parts = $message->getParts();
-
-		if ( empty( $parts ) ) {
+		$decoded = json_decode( $signature, true );
+		$id      = $decoded['id'] ?? null;
+		if ( ! is_string( $id ) || '' === $id ) {
 			return null;
 		}
 
-		$role    = $message->getRole();
-		$content = array();
-		foreach ( $parts as $part ) {
-			if ( $part->getChannel()->isThought() ) {
+		$item = array(
+			'type'    => 'reasoning',
+			'id'      => $id,
+			'summary' => is_array( $decoded['summary'] ?? null ) ? $decoded['summary'] : array(),
+		);
+		if ( is_string( $decoded['encrypted_content'] ?? null ) ) {
+			$item['encrypted_content'] = $decoded['encrypted_content'];
+		}
+		return $item;
+	}
+
+	/**
+	 * Keeps tool parts as top-level items and wraps ordinary content in a message.
+	 *
+	 * @param array           $content Mapped message parts.
+	 * @param MessageRoleEnum $role    Message role.
+	 * @return array
+	 * @throws InvalidArgumentException If a tool part is mixed with other content.
+	 */
+	private function wrap_message_content( array $content, MessageRoleEnum $role ): array {
+		foreach ( $content as $part ) {
+			if ( ! in_array( $part['type'], array( 'function_call', 'function_call_output' ), true ) ) {
 				continue;
 			}
-			$part_data = $this->get_message_part_data( $part, $role );
-
-			// Function calls and responses are top-level items, not wrapped in a message.
-			// validate_messages() ensures these are the only part in a message.
-			$part_type = $part_data['type'] ?? '';
-			if ( 'function_call' === $part_type || 'function_call_output' === $part_type ) {
-				return $part_data;
+			if ( 1 !== count( $content ) ) {
+				throw new InvalidArgumentException( 'Function calls and responses must be the only content part in a message for the OpenAI Responses API.' );
 			}
-
-			$content[] = $part_data;
-		}
-
-		if ( empty( $content ) ) {
-			return null;
+			return $part;
 		}
 
 		return array(
-			'role'    => $this->get_message_role_string( $role ),
+			'role'    => $role->isModel() ? 'assistant' : 'user',
 			'content' => $content,
 		);
-	}
-
-	/**
-	 * Returns the OpenAI API specific role string for the given message role.
-	 *
-	 * @since 1.0.1
-	 *
-	 * @param MessageRoleEnum $role The message role.
-	 * @return string The role for the API request.
-	 */
-	protected function get_message_role_string( MessageRoleEnum $role ): string {
-		if ( MessageRoleEnum::model() === $role ) {
-			return 'assistant';
-		}
-		return 'user';
 	}
 
 	/**
@@ -396,53 +288,7 @@ class Responses_Mapper extends AbstractApiBasedModel {
 			);
 		}
 		if ( $type->isFile() ) {
-			$file = $part->getFile();
-			if ( ! $file ) {
-				// This should be impossible due to class internals, but still needs to be checked.
-				throw new RuntimeException(
-					'The file typed message part must contain a file.'
-				);
-			}
-			if ( $file->isRemote() ) {
-				$file_url = $file->getUrl();
-				if ( ! $file_url ) {
-					// This should be impossible due to class internals, but still needs to be checked.
-					throw new RuntimeException(
-						'The remote file must contain a URL.'
-					);
-				}
-				if ( $file->isImage() ) {
-					return array(
-						'type'      => 'input_image',
-						'image_url' => $file_url,
-					);
-				}
-				// For other file types, use input_file with URL.
-				return array(
-					'type'     => 'input_file',
-					'file_url' => $file_url,
-				);
-			}
-			// Else, it is an inline file.
-			$data_uri = $file->getDataUri();
-			if ( ! $data_uri ) {
-				// This should be impossible due to class internals, but still needs to be checked.
-				throw new RuntimeException(
-					'The inline file must contain base64 data.'
-				);
-			}
-			if ( $file->isImage() ) {
-				return array(
-					'type'      => 'input_image',
-					'image_url' => $data_uri,
-				);
-			}
-			// For other file types (like PDF), use input_file.
-			return array(
-				'type'      => 'input_file',
-				'filename'  => 'file',
-				'file_data' => $data_uri,
-			);
+			return $this->map_file_part( $part );
 		}
 		if ( $type->isFunctionCall() ) {
 			$function_call = $part->getFunctionCall();
@@ -483,6 +329,41 @@ class Responses_Mapper extends AbstractApiBasedModel {
 				$type
 			)
 		);
+	}
+
+	/**
+	 * Maps an inline or remote file to its Responses API content type.
+	 *
+	 * @param MessagePart $part File part.
+	 * @return array
+	 * @throws RuntimeException If the file data is missing.
+	 */
+	private function map_file_part( MessagePart $part ): array {
+		$file = $part->getFile();
+		if ( ! $file ) {
+			throw new RuntimeException( 'The file typed message part must contain a file.' );
+		}
+		$remote = $file->isRemote();
+		$source = $remote ? $file->getUrl() : $file->getDataUri();
+		if ( ! $source ) {
+			throw new RuntimeException( $remote ? 'The remote file must contain a URL.' : 'The inline file must contain base64 data.' );
+		}
+		if ( $file->isImage() ) {
+			return array(
+				'type'      => 'input_image',
+				'image_url' => $source,
+			);
+		}
+		return $remote
+			? array(
+				'type'     => 'input_file',
+				'file_url' => $source,
+			)
+			: array(
+				'type'      => 'input_file',
+				'filename'  => 'file',
+				'file_data' => $source,
+			);
 	}
 
 	/**
@@ -529,32 +410,13 @@ class Responses_Mapper extends AbstractApiBasedModel {
 	 *
 	 * @since 1.0.1
 	 *
-	 * @param Response $response The response from the API endpoint.
+	 * @param array $response_data Decoded response from the API endpoint.
 	 * @return GenerativeAiResult The parsed generative AI result.
 	 * @throws ResponseException If request or response data is invalid.
-	 * @throws TokenLimitReachedException If request or response data is invalid.
 	 */
-	public function parse_result( Response $response ): GenerativeAiResult {
-		$response_data = $response->getData();
-
-		// Check for token limit before processing output. When max_output_tokens is reached, OpenAI returns
-		// status 'incomplete' with incomplete_details.reason 'max_output_tokens'. The output array may be
-		// empty in this case, so this check must happen before the output validation below.
+	public function parse_result( array $response_data ): GenerativeAiResult {
 		$status = $response_data['status'] ?? 'completed';
-		if ( 'incomplete' === $status ) {
-			$incomplete_details = $response_data['incomplete_details'] ?? null;
-			$reason             = is_array( $incomplete_details ) ? ( $incomplete_details['reason'] ?? '' ) : '';
-			if ( 'max_output_tokens' === $reason ) {
-				$max_tokens = $this->getConfig()->getMaxTokens();
-				throw new TokenLimitReachedException(
-					sprintf(
-						'Generation stopped due to token limit with reason "%s".',
-						$reason
-					),
-					$max_tokens
-				);
-			}
-		}
+		$this->check_token_limit( $status, $response_data['incomplete_details'] ?? null );
 
 		if ( ! isset( $response_data['output'] ) || ! $response_data['output'] ) {
 			throw ResponseException::fromMissingData( $this->providerMetadata()->getName(), 'output' );
@@ -567,36 +429,7 @@ class Responses_Mapper extends AbstractApiBasedModel {
 			);
 		}
 
-		$candidates              = array();
-		$pending_reasoning_parts = array();
-		foreach ( $response_data['output'] as $index => $output_item ) {
-			if ( ! is_array( $output_item ) || array_values( $output_item ) === $output_item ) {
-				throw ResponseException::fromInvalidData(
-					$this->providerMetadata()->getName(),
-					"output[{$index}]",
-					'The value must be an associative array.'
-				);
-			}
-
-			if ( ( $output_item['type'] ?? '' ) === 'reasoning' ) {
-				$reasoning_part = $this->parse_reasoning_output_to_part( $output_item );
-				if ( null !== $reasoning_part ) {
-					$pending_reasoning_parts[] = $reasoning_part;
-				}
-				continue;
-			}
-
-			$candidate = $this->parse_output_item_to_candidate(
-				$output_item,
-				$index,
-				$response_data['status'] ?? 'completed',
-				$pending_reasoning_parts
-			);
-			if ( null !== $candidate ) {
-				$candidates[] = $candidate;
-			}
-			$pending_reasoning_parts = array();
-		}
+		$candidates = $this->parse_candidates( $response_data['output'], $status );
 
 		$id = isset( $response_data['id'] ) && is_string( $response_data['id'] ) ? $response_data['id'] : '';
 
@@ -619,6 +452,65 @@ class Responses_Mapper extends AbstractApiBasedModel {
 			$this->metadata(),
 			$additional_data
 		);
+	}
+
+	/**
+	 * Surfaces token exhaustion even when the response has no output.
+	 *
+	 * @param string $status  Response status.
+	 * @param mixed  $details Reason for an incomplete response.
+	 * @throws TokenLimitReachedException If generation exhausted the token limit.
+	 */
+	private function check_token_limit( string $status, $details ): void {
+		if ( 'incomplete' === $status && is_array( $details ) && 'max_output_tokens' === ( $details['reason'] ?? '' ) ) {
+			throw new TokenLimitReachedException(
+				'Generation stopped due to token limit with reason "max_output_tokens".',
+				$this->getConfig()->getMaxTokens()
+			);
+		}
+	}
+
+	/**
+	 * Maps response output and carries reasoning forward to the next candidate.
+	 *
+	 * @param array  $output API output items.
+	 * @param string $status Response status.
+	 * @return array
+	 * @throws ResponseException If an output item is malformed.
+	 */
+	private function parse_candidates( array $output, string $status ): array {
+		$candidates              = array();
+		$pending_reasoning_parts = array();
+		foreach ( $output as $index => $output_item ) {
+			if ( ! is_array( $output_item ) || array_values( $output_item ) === $output_item ) {
+				throw ResponseException::fromInvalidData(
+					$this->providerMetadata()->getName(),
+					"output[{$index}]",
+					'The value must be an associative array.'
+				);
+			}
+
+			if ( ( $output_item['type'] ?? '' ) === 'reasoning' ) {
+				$reasoning_part = $this->parse_reasoning_output_to_part( $output_item );
+				if ( null !== $reasoning_part ) {
+					$pending_reasoning_parts[] = $reasoning_part;
+				}
+				continue;
+			}
+
+			$candidate = $this->parse_output_item_to_candidate(
+				$output_item,
+				$index,
+				$status,
+				$pending_reasoning_parts
+			);
+			if ( null !== $candidate ) {
+				$candidates[] = $candidate;
+			}
+			$pending_reasoning_parts = array();
+		}
+
+		return $candidates;
 	}
 
 	/**
@@ -800,27 +692,11 @@ class Responses_Mapper extends AbstractApiBasedModel {
 			);
 		}
 
-		/*
-		 * Parse and normalize function arguments.
-		 * OpenAI returns arguments as a JSON string. An empty object "{}"
-		 * decodes to an empty array, which semantically means "no arguments"
-		 * and should be normalized to null.
-		 */
-		$args = null;
-		if ( isset( $output_item['arguments'] ) && is_string( $output_item['arguments'] ) ) {
-			$decoded = json_decode( $output_item['arguments'], true );
-			if ( is_array( $decoded ) && count( $decoded ) > 0 ) {
-				$args = $decoded;
-			}
-		}
-
-		$function_call = new FunctionCall(
+		$part    = $this->map_function_call(
 			$output_item['call_id'],
-			$this->original_function_name( $output_item['name'] ),
-			$args
+			$output_item['name'],
+			$output_item['arguments'] ?? null
 		);
-
-		$part    = new MessagePart( $function_call );
 		$parts   = $reasoning_parts;
 		$parts[] = $part;
 		$message = new Message( MessageRoleEnum::model(), $parts );
@@ -905,31 +781,26 @@ class Responses_Mapper extends AbstractApiBasedModel {
 				throw new InvalidArgumentException( 'Content has an invalid function_call shape.' );
 			}
 
-			/*
-			 * Parse and normalize function arguments.
-			 * OpenAI returns arguments as a JSON string. An empty object "{}"
-			 * decodes to an empty array, which semantically means "no arguments"
-			 * and should be normalized to null.
-			 */
-			$args = null;
-			if ( isset( $content_item['arguments'] ) && is_string( $content_item['arguments'] ) ) {
-				$decoded = json_decode( $content_item['arguments'], true );
-				if ( is_array( $decoded ) && count( $decoded ) > 0 ) {
-					$args = $decoded;
-				}
-			}
-
-			return new MessagePart(
-				new FunctionCall(
-					$content_item['call_id'],
-					$this->original_function_name( $content_item['name'] ),
-					$args
-				)
-			);
+			return $this->map_function_call( $content_item['call_id'], $content_item['name'], $content_item['arguments'] ?? null );
 		}
 
 		// Skip unknown content types.
 		return null;
+	}
+
+	/**
+	 * Decodes a tool call from either Responses API output location.
+	 *
+	 * @param string $id        Function call ID.
+	 * @param string $name      API function name.
+	 * @param mixed  $arguments JSON-encoded arguments.
+	 * @return MessagePart
+	 */
+	private function map_function_call( string $id, string $name, $arguments ): MessagePart {
+		$decoded = is_string( $arguments ) ? json_decode( $arguments, true ) : null;
+		return new MessagePart(
+			new FunctionCall( $id, $this->original_function_name( $name ), is_array( $decoded ) && $decoded ? $decoded : null )
+		);
 	}
 
 	/**

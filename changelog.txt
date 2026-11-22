@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 1.0.2 =
+
+**Changed**
+
+* Simplified how the ChatGPT connector processes prompts, streamed results, and tool calls.
+* New ChatGPT connection requests display the site URL so you can tell sites apart.
+
 = 1.0.1 =
 
 Release date: 22 November 2026

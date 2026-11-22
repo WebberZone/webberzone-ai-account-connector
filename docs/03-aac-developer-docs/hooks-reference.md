@@ -149,12 +149,12 @@ If the standalone plugin `WebberZone\ChatGPT_Account` or `WebberZone\Grok_Accoun
 
 ## ChatGPT Request Shaping
 
-ChatGPT text generation uses OpenAI's Responses API with streaming enabled. Before the request is sent, the model drops unsupported parameters, including `temperature`, `top_p`, and `max_output_tokens`, because OpenAI rejects them on this account-backed path. Fallback model lists and timeout filters above still apply.
+ChatGPT text generation uses OpenAI's Responses API with streaming enabled. As of 1.0.1 the plugin ships its own Responses API request and response mapping in `includes/chatgpt/class-responses-mapper.php`, so ChatGPT does not depend on AI Provider for OpenAI. Before the request is sent, the model drops unsupported parameters, including `temperature`, `top_p`, and `max_output_tokens`, because OpenAI rejects them on this account-backed path. Fallback model lists and timeout filters above still apply.
 
 ## Layout
 
 | Path | Purpose |
 |---|---|
 | `includes/` | Provider-independent classes: `Admin`, `Connectors`, `OAuth_Client`, `Token_Store`, `Availability` |
-| `includes/chatgpt/`, `includes/grok/` | Provider-specific `Config`, `OAuth`, models, model directory and authentication |
+| `includes/chatgpt/`, `includes/grok/` | Provider-specific `Config`, `OAuth`, models, model directory, Responses API mapping (ChatGPT) and authentication |
 | `assets/js/connectors.js` | Connector cards on Settings → Connectors, loaded as a script module (`.min.js` unless `SCRIPT_DEBUG`) |

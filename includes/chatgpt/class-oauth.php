@@ -378,14 +378,14 @@ class OAuth extends OAuth_Client {
 	}
 
 	/**
-	 * Returns the app name with this site's title, so the user can tell their sites apart in ChatGPT.
+	 * Returns the app name with this site's public URL, so the user can tell their sites apart in ChatGPT.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
 	private static function agent_name() {
-		$site = wp_html_excerpt( wp_strip_all_tags( (string) get_option( 'blogname' ) ), 60 );
+		$site = untrailingslashit( home_url() );
 		return '' === $site ? self::AGENT_NAME : self::AGENT_NAME . ' (' . $site . ')';
 	}
 

@@ -14,7 +14,7 @@ Fixes for the messages [WebberZone AI Account Connector](https://github.com/Webb
 
 | Symptom | Cause and fix |
 |---|---|
-| No ChatGPT card | Check that WebberZone AI Account Connector is active and that you are running WordPress 7.0 or later. On version 1.0.0, update the connector to remove its dependency on AI Provider for OpenAI. |
+| No ChatGPT card | Check that WebberZone AI Account Connector is active and that you are running WordPress 7.0 or later. From 1.0.1 onward ChatGPT does not need AI Provider for OpenAI. If you still run 1.0.0, update the connector first. |
 | No update appears although a newer release exists on GitHub | Updates use published GitHub releases that include a `webberzone-ai-account-connector.zip` asset. Confirm the release is published, not draft only. If you disabled checks with `wzaiac_enable_update_checks`, turn them back on or install manually from the releases page. |
 | "The sign-in expired. Start again." | A sign-in is valid for 15 minutes with ChatGPT and 30 minutes with Grok. Choose **Try again** to start a new one. |
 | "The sign-in was declined." (Grok) | You chose to deny access on xAI's page. Choose **Try again** and approve. |

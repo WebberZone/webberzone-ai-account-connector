@@ -55,7 +55,7 @@ No. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI.
 
 == External services ==
 
-The plugin contacts the corresponding service when you use its connector. ChatGPT sign-in sends OpenAI a registration request (the app name WebberZone AI Account Connector followed by your site's title, and a random per-site host ID) and, once you paste the address your browser was sent to, exchanges the authorization code for tokens. Grok sign-in opens xAI's consent screen, you match the device code on xAI's page to the dialog, and WordPress exchanges it for tokens on the server. Nothing is pasted back into WordPress for Grok. Whenever the AI Client uses a connected account, the plugin may refresh the saved tokens and fetch the list of available models in the background (the OpenAI `/v1/models` endpoint and the xAI `/models` endpoint). Uninstalling the plugin attempts remote revocation for every connected account on every site. The plugin encrypts saved tokens using WordPress authentication salts and uses them to authenticate requests and refresh the connection. Generation requests can include prompts, images, and generation settings from the WordPress feature making the request. Disconnecting attempts remote revocation where supported.
+The plugin contacts the corresponding service when you use its connector. ChatGPT sign-in sends OpenAI a registration request (the app name WebberZone AI Account Connector followed by your site's public URL, and a random per-site host ID) and, once you paste the address your browser was sent to, exchanges the authorization code for tokens. Grok sign-in opens xAI's consent screen, you match the device code on xAI's page to the dialog, and WordPress exchanges it for tokens on the server. Nothing is pasted back into WordPress for Grok. Whenever the AI Client uses a connected account, the plugin may refresh the saved tokens and fetch the list of available models in the background (the OpenAI `/v1/models` endpoint and the xAI `/models` endpoint). Uninstalling the plugin attempts remote revocation for every connected account on every site. The plugin encrypts saved tokens using WordPress authentication salts and uses them to authenticate requests and refresh the connection. Generation requests can include prompts, images, and generation settings from the WordPress feature making the request. Disconnecting attempts remote revocation where supported.
 
 How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-source apps. Your site registers itself with OpenAI during your first sign-in, you approve access on OpenAI's page, and requests go through OpenAI's public Responses API. The program is a preview and OpenAI's terms may not cover every kind of hosted site, so check the [Sign in with ChatGPT terms](https://openai.com/policies/sign-in-with-chatgpt-terms/). xAI has no equivalent program for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools and signs in through xAI's consent screen via the device authorization flow. WebberZone has no application of its own registered with either provider (with ChatGPT, each site registers itself with OpenAI as WebberZone AI Account Connector), and this plugin is not an official integration. Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts. A provider may change or block this at any time, so check that your use complies with its terms.
 
@@ -64,6 +64,13 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 * The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzaiac_enable_update_checks` filter to turn this off.
 
 == Changelog ==
+
+= 1.0.2 =
+
+**Changed**
+
+* Simplified how the ChatGPT connector processes prompts, streamed results, and tool calls.
+* New ChatGPT connection requests display the site URL so you can tell sites apart.
 
 = 1.0.1 =
 
@@ -82,5 +89,5 @@ Release date: 22 November 2026
 
 == Upgrade Notice ==
 
-= 1.0.1 =
-ChatGPT works without the separate AI Provider for OpenAI plugin. Existing account connections carry over.
+= 1.0.2 =
+Simplifies ChatGPT request and response handling.
