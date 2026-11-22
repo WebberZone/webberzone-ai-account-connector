@@ -9,7 +9,7 @@ Connect your ChatGPT and Grok accounts to the WordPress AI Client from **Setting
 ## Requirements
 
 - WordPress 7.0 or later, PHP 7.4 or later
-- ChatGPT: a ChatGPT Plus or Pro plan and a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/)
+- ChatGPT: a ChatGPT Plus or Pro plan
 - Grok: an xAI account with SuperGrok or X Premium
 
 ## Installation

@@ -9,4 +9,3 @@ parameters:
     scanDirectories:
         - includes
         - vendor/wordpress/php-ai-client/src
-        - vendor/wordpress/ai-provider-for-openai/src

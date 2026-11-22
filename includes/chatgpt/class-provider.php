@@ -65,15 +65,13 @@ class Provider extends AbstractApiProvider {
 	 * @since 1.0.0
 	 */
 	protected static function createProviderMetadata(): ProviderMetadata {
-		$logo = WP_PLUGIN_DIR . '/ai-provider-for-openai/assets/images/openai.svg';
 		return new ProviderMetadata(
 			PROVIDER_ID,
 			__( 'ChatGPT Account', 'webberzone-ai-account-connector' ),
 			ProviderTypeEnum::cloud(),
 			admin_url( 'options-connectors.php' ),
 			RequestAuthenticationMethod::apiKey(),
-			__( 'Text generation using your ChatGPT subscription. Sign in with ChatGPT; no API key needed.', 'webberzone-ai-account-connector' ),
-			file_exists( $logo ) ? $logo : null
+			__( 'Text generation using your ChatGPT subscription. Sign in with ChatGPT; no API key needed.', 'webberzone-ai-account-connector' )
 		);
 	}
 

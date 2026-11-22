@@ -51,13 +51,13 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	 * @param array $prompt List of messages.
 	 */
 	public function generateTextResult( array $prompt ): GenerativeAiResult {
-		$bridge = new OpenAI_Bridge( $this->metadata(), $this->providerMetadata() );
-		$bridge->setConfig( $this->getConfig() );
+		$mapper = new Responses_Mapper( $this->metadata(), $this->providerMetadata() );
+		$mapper->setConfig( $this->getConfig() );
 
-		$params   = $this->adapt_params( $bridge->build_params( $prompt ) );
+		$params   = $this->adapt_params( $mapper->build_params( $prompt ) );
 		$response = $this->send( $params, true );
 
-		return $bridge->parse_result( $this->parse_stream( $response ) );
+		return $mapper->parse_result( $this->parse_stream( $response ) );
 	}
 
 	/**

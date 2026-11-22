@@ -19,42 +19,12 @@ use WordPress\AiClient\AiClient;
 const PROVIDER_ID = 'chatgpt-account';
 
 /**
- * Checks that the WordPress AI Client and a compatible AI Provider for OpenAI are loaded.
+ * Checks that the WordPress AI Client is loaded.
  *
- * The plugin subclasses the OpenAI provider's models, so a missing class, or a hook method that was
- * renamed or made final in an update, would be an uncatchable fatal error when our classes load.
- * Everything that touches those subclasses is gated behind this check.
- *
- * @since 1.0.0
- *
- * @return bool True if all dependencies are available and compatible.
+ * @return bool
  */
 function is_ready() {
-	static $ready = null;
-	if ( null !== $ready ) {
-		return $ready;
-	}
-
-	$required = array(
-		'WordPress\OpenAiAiProvider\Models\OpenAiTextGenerationModel'  => array( 'prepareGenerateTextParams', 'parseResponseToGenerativeAiResult' ),
-		'WordPress\OpenAiAiProvider\Models\OpenAiImageGenerationModel' => array( 'generateImageResult', 'prepareGenerateImageParams', 'createRequest', 'promptContainsImage' ),
-	);
-
-	$ready = class_exists( AiClient::class );
-	foreach ( $required as $class_name => $methods ) {
-		if ( ! $ready || ! class_exists( $class_name ) ) {
-			$ready = false;
-			break;
-		}
-		foreach ( $methods as $method ) {
-			if ( ! method_exists( $class_name, $method ) || ( new \ReflectionMethod( $class_name, $method ) )->isFinal() ) {
-				$ready = false;
-				break 2;
-			}
-		}
-	}
-
-	return $ready;
+	return class_exists( AiClient::class );
 }
 
 /**

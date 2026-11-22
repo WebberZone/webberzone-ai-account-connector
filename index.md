@@ -63,10 +63,6 @@ permalink: /
       <p>When a release is available, download <code>webberzone-ai-account-connector.zip</code> from <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank">GitHub Releases</a>, then upload and activate it under Plugins → Add New → Upload Plugin. Newer releases also appear on the Plugins screen when GitHub publishes an update.</p>
     </li>
     <li>
-      <h3>For ChatGPT: add AI Provider for OpenAI</h3>
-      <p>Install and activate <a href="https://wordpress.org/plugins/ai-provider-for-openai/" target="_blank">AI Provider for OpenAI</a>. You need a ChatGPT Plus or Pro plan. Grok needs neither.</p>
-    </li>
-    <li>
       <h3>Sign in</h3>
       <p>Go to <strong>Settings → Connectors</strong>, click <strong>Sign in with ChatGPT</strong> or <strong>Sign in with xAI</strong> on the matching card, and follow the prompts. For Grok, check the code on xAI's page matches the dialog and approve; it connects on its own. For ChatGPT, approve access, then paste the address your browser is sent to (it starts with <code>http://127.0.0.1</code> and will not load). If the AI plugin shows a connector approval notice, approve the account for the plugins that should use it.</p>
     </li>
@@ -105,5 +101,5 @@ permalink: /
 <div class="home-section" style="padding-top:0;">
   <div class="eyebrow">Requirements</div>
   <h2 class="section-title" style="margin-bottom:8px;">What you need</h2>
-  <p style="color:var(--wz-warm-grey); max-width:64ch;">WordPress 7.0+, PHP 7.4+, and a ChatGPT account (with AI Provider for OpenAI) and/or an xAI account with SuperGrok or X Premium. See the <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank">releases</a> page for the changelog.</p>
+  <p style="color:var(--wz-warm-grey); max-width:64ch;">WordPress 7.0+, PHP 7.4+, and a ChatGPT Plus or Pro plan and/or an xAI account with SuperGrok or X Premium. See the <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank">releases</a> page for the changelog.</p>
 </div>

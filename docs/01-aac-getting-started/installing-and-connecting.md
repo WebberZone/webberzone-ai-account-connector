@@ -17,16 +17,13 @@ The plugin is independent and is not affiliated with, endorsed by, or sponsored 
 ## Requirements
 
 - WordPress 7.0 or later and PHP 7.4 or later
-- **ChatGPT:** a ChatGPT Plus or Pro plan and a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/)
+- **ChatGPT:** a ChatGPT Plus or Pro plan
 - **Grok:** an xAI account with SuperGrok or X Premium
-
-Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because the connector builds on its request and response handling.
 
 ## Install the Plugin
 
 1. Download `webberzone-ai-account-connector.zip` from the [releases page](https://github.com/WebberZone/webberzone-ai-account-connector/releases) on GitHub.
 2. Go to **Plugins → Add New → Upload Plugin**, upload the ZIP, and activate it.
-3. If you want ChatGPT, install and activate **AI Provider for OpenAI** as well.
 
 The plugin is not on WordPress.org. GitHub releases are the supported distribution path.
 

@@ -4,7 +4,7 @@ Tags: ai, connectors, chatgpt, grok
 Requires at least: 7.0
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ Link ChatGPT, Grok, or both from the WordPress Connectors screen, then use those
 
 **Read this first.** A provider may change or block this at any time. Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in, so use the plugin on sites you control. Grok has no official program for this, so use it entirely at your own risk. Do not use one person's subscription for other people's requests; OpenAI's terms forbid it.
 
-ChatGPT needs a Plus or Pro plan and a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). Grok works independently.
+ChatGPT needs a Plus or Pro plan.
 
 **Not affiliated.** This plugin is an independent project by WebberZone. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI. Grok is a trademark of xAI. The names are used only to describe which accounts the plugin works with.
 
@@ -65,9 +65,22 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 
 == Changelog ==
 
+= 1.0.1 =
+
+Release date: 22 November 2026
+
+**Removed**
+
+* The ChatGPT connector no longer requires the separate AI Provider for OpenAI plugin. Existing account connections carry over.
+
 = 1.0.0 =
 * Automatic updates from GitHub releases when a newer version is published.
 * Connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
 * ChatGPT uses OpenAI's Sign in with ChatGPT for open-source apps and the public Responses API, for text generation. Paste back the address your browser is sent to.
 * Grok uses xAI's device-code sign-in, for text and image generation. Enter the code on xAI's page; nothing is pasted back.
 * A warning on every connect dialog that must be accepted before signing in.
+
+== Upgrade Notice ==
+
+= 1.0.1 =
+ChatGPT works without the separate AI Provider for OpenAI plugin. Existing account connections carry over.
