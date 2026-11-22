@@ -11,6 +11,8 @@ toc: true
 
 [toc]
 
+Fixes for the messages [WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) can show while you sign in or generate content.
+
 | Symptom | Cause and fix |
 |---|---|
 | No ChatGPT card, or a notice about AI Provider for OpenAI | The ChatGPT connector needs a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). Install and activate it. |

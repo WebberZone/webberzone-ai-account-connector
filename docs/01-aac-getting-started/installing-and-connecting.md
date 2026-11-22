@@ -3,7 +3,7 @@ slug: installing-and-connecting
 title: "Installing and Connecting Your Accounts"
 products: [webberzone-ai-account-connector]
 sections: ["01-aac-getting-started"]
-tags: [ai-account-connector, installation, chatgpt, grok]
+tags: [ai-account-connector, chatgpt, grok, installation]
 status: publish
 order: 0
 toc: true
@@ -11,9 +11,9 @@ toc: true
 
 [toc]
 
-WebberZone AI Account Connector lets you sign in with your existing ChatGPT and Grok accounts from **Settings → Connectors**, so the WordPress AI Client can use them for text generation (ChatGPT) and text and image generation (Grok). No API key is needed.
+[WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) lets you sign in with your existing ChatGPT and Grok accounts from **Settings → Connectors**, so the WordPress AI Client can use them for text generation (ChatGPT) and text and image generation (Grok). No API key is needed.
 
-> **Not affiliated.** This is an independent plugin. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI. Grok is a trademark of xAI. The names are used only to describe which accounts the plugin works with.
+The plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI, and Grok is a trademark of xAI. The names describe which accounts the plugin works with.
 
 ---
 
@@ -37,12 +37,12 @@ Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because t
 
 ## Before You Connect
 
-Every connect dialog opens with a warning that you must accept before anything starts. It says that this plugin is independent and not an official OpenAI or xAI integration, that connecting this way may break the provider's terms and the provider may restrict or suspend your account, and that other code running on your site, such as plugins and themes, can still use the token while it is connected. Connect only if you are the administrator who will use it, on a site you control. Grok in particular has no official xAI programme, so it is entirely at your own risk.
+Every connect dialog opens with a warning that you must accept before anything starts. It says that this plugin is independent and not an official OpenAI or xAI integration, that connecting this way may break the provider's terms and the provider may restrict or suspend your account, and that other code running on your site, such as plugins and themes, can still use the token while it is connected. Connect only if you are the administrator who will use it, on a site you control. Grok in particular has no official xAI program, so it is entirely at your own risk.
 
 ## Connect ChatGPT
 
 1. Go to **Settings → Connectors** and choose **Sign in with ChatGPT** on the ChatGPT Account card.
-2. Read the warning and the note about what to expect, and tick the box to continue. The dialog stays open with the paste field ready while you approve.
+2. Read the warning and the note about what to expect, then tick the box to continue. The note tells you that your browser may show "This site can't be reached" and that the address to copy starts with `http://127.0.0.1`. The dialog stays open with the paste field ready while you approve.
 3. Approve access on the ChatGPT sign-in page that opens, and sign in if asked.
 4. Your browser then shows an error page ("This site can't be reached") at an address starting with `http://127.0.0.1:1455`. That is expected: OpenAI can only redirect to your own computer, and the address contains the sign-in for your site.
 5. Copy the full address from the browser's address bar, paste it into the dialog, and choose **Connect**. The card shows **Connected** with the account email.

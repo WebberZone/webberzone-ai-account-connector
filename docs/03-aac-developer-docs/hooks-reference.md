@@ -11,6 +11,8 @@ toc: true
 
 [toc]
 
+[WebberZone AI Account Connector](https://github.com/WebberZone/webberzone-ai-account-connector) registers two providers with the WordPress AI Client and exposes a small set of filters, options and AJAX actions.
+
 ## Provider IDs
 
 | Provider | AI Client provider ID | Namespace |
@@ -20,32 +22,76 @@ toc: true
 
 The provider ID also drives the connector slug and setting names in WordPress core.
 
-## Filters
+## Filter Hooks
 
-### `wzap_chatgpt_min_timeout`
-### `wzap_grok_min_timeout`
+### `wzap_chatgpt_min_timeout( $minimum, $model_id )`
 
-Filters the minimum request timeout in seconds.
-
-```php
-apply_filters( 'wzap_chatgpt_min_timeout', float $minimum, string $model_id );
-```
-
-The default is `0` for known ChatGPT models and for Grok non-reasoning models, otherwise `180`. Text models keep a caller's explicit timeout when it is above the minimum, so a plugin can fall back to another provider sooner. Requests without a timeout, or with the AI Client's default, get at least 180 seconds.
-
-### `wzap_chatgpt_fallback_models`
-### `wzap_grok_fallback_models`
-
-Filter the models used when the live model list cannot be fetched.
+Filters the minimum request timeout for ChatGPT, in seconds.
 
 ```php
-apply_filters( 'wzap_chatgpt_fallback_models', array $models ); // [ 'model-id' => 'Label' ]
-apply_filters( 'wzap_grok_fallback_models', array $models );    // [ 'model-id' => 'text' | 'image' ]
+add_filter(
+	'wzap_chatgpt_min_timeout',
+	function ( $minimum, $model_id ) {
+		return 60.0;
+	},
+	10,
+	2
+);
 ```
+
+**Parameters:**
+
+- `$minimum` *(float)*: Minimum timeout. `0` for known models, otherwise `180`.
+- `$model_id` *(string)*: Model ID, or an empty string when unknown.
+
+**Returns:** `float`: The minimum timeout.
+
+Text models keep a caller's explicit timeout when it is above the minimum, so a plugin can fall back to another provider sooner. Requests with no timeout, or with the AI Client's default, get at least 180 seconds.
+
+### `wzap_grok_min_timeout( $minimum, $model_id )`
+
+Filters the minimum request timeout for Grok, in seconds.
+
+**Parameters:**
+
+- `$minimum` *(float)*: Minimum timeout. `0` for non-reasoning models, otherwise `180`.
+- `$model_id` *(string)*: Model ID, or an empty string when unknown.
+
+**Returns:** `float`: The minimum timeout.
+
+### `wzap_chatgpt_fallback_models( $models )`
+
+Filters the ChatGPT models offered when the live model list cannot be fetched.
+
+```php
+add_filter(
+	'wzap_chatgpt_fallback_models',
+	function ( $models ) {
+		$models['gpt-example'] = 'GPT Example';
+		return $models;
+	}
+);
+```
+
+**Parameters:**
+
+- `$models` *(array)*: Model ID mapped to display name.
+
+**Returns:** `array`: The models.
+
+### `wzap_grok_fallback_models( $models )`
+
+Filters the Grok models offered when the live model list cannot be fetched.
+
+**Parameters:**
+
+- `$models` *(array)*: Model ID mapped to a type, either `text` or `image`.
+
+**Returns:** `array`: The models.
 
 ## Filters the Plugin Hooks Into
 
-For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`, and for Grok also from `wpai_has_image_generation_support` (ChatGPT does not support image generation), so the WordPress AI plugin knows what is available.
+For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`. For Grok it also returns `true` from `wpai_has_image_generation_support`, because ChatGPT does not support image generation. The WordPress AI plugin uses these to know what is available.
 
 ## Storage
 
@@ -63,7 +109,16 @@ Tokens are encrypted with libsodium. The key is derived from `AUTH_KEY` and `AUT
 
 ## AJAX Actions
 
-Each provider registers `wp_ajax_{prefix}_start`, `_exchange`, `_cancel` and `_disconnect`. `_start` requires `acknowledged=1`, set by the connect dialog after the warning is accepted. `_exchange` takes the pasted `code`: the one-time code for Grok, the redirect address for ChatGPT, where the prefix is `wzap_chatgpt` or `wzap_grok`. Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability.
+Each provider registers four `wp_ajax_` actions, where the prefix is `wzap_chatgpt` or `wzap_grok`.
+
+| Action | Purpose |
+|---|---|
+| `{prefix}_start` | Starts a sign-in and returns the consent URL. Requires `acknowledged=1`, which the connect dialog sends after the warning is accepted. |
+| `{prefix}_exchange` | Finishes the sign-in from the pasted `code`: the one-time code for Grok, or the redirect address for ChatGPT. |
+| `{prefix}_cancel` | Abandons the pending sign-in. |
+| `{prefix}_disconnect` | Removes the stored tokens and asks the provider to revoke the sign-in. |
+
+Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability.
 
 ## Layout
 

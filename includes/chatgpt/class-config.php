@@ -142,7 +142,7 @@ class Config {
 	 * @return string
 	 */
 	public static function expect() {
-		return __( 'After approving access, your browser may show \'This site can\'t be reached.\' That is expected. Copy the address from that tab, return here, and paste it below.', 'webberzone-ai-account-connector' );
+		return __( 'After approving access, your browser may show \'This site can\'t be reached.\' That is expected. Copy the address from that tab, which starts with http://127.0.0.1, return here, and paste it below.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
