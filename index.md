@@ -10,6 +10,7 @@ permalink: /
   <p class="lead">WebberZone AI Account Connector adds <strong>ChatGPT Account</strong> and <strong>Grok Account</strong> providers to the WordPress AI Client. Sign in from Settings&nbsp;→&nbsp;Connectors, and text and image generation run against your existing plan instead of a separately billed API key.</p>
   <div class="hero-ctas">
     <a href="#installation" class="btn-primary">Installation</a>
+    <a href="#documentation" class="btn-outline">Documentation</a>
     <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank" class="btn-outline">View Releases</a>
     <a href="https://github.com/WebberZone/webberzone-ai-account-connector" target="_blank" class="btn-outline">View on GitHub</a>
   </div>
@@ -70,6 +71,29 @@ permalink: /
       <p>Go to <strong>Settings → Connectors</strong>, click <strong>Sign in with ChatGPT</strong> or <strong>Sign in with xAI</strong> on the matching card, and follow the prompts. If the AI plugin shows a connector approval notice, approve the account for the plugins that should use it.</p>
     </li>
   </ol>
+</div>
+
+<div class="home-section" id="documentation" style="padding-top:0;">
+  <div class="eyebrow">Documentation</div>
+  <h2 class="section-title" style="margin-bottom:8px;">Guides and reference</h2>
+  <div class="feature-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+    <div class="feature-card">
+      <h3><a href="https://github.com/WebberZone/webberzone-ai-account-connector/blob/master/docs/01-aac-getting-started/installing-and-connecting.md" target="_blank">Installing and connecting</a></h3>
+      <p>Requirements, installing the plugin, and signing in with ChatGPT and Grok.</p>
+    </div>
+    <div class="feature-card">
+      <h3><a href="https://github.com/WebberZone/webberzone-ai-account-connector/blob/master/docs/02-aac-advanced/how-sign-in-works.md" target="_blank">How sign-in works</a></h3>
+      <p>The device-code flow, token storage and encryption, refreshing, and the external services used.</p>
+    </div>
+    <div class="feature-card">
+      <h3><a href="https://github.com/WebberZone/webberzone-ai-account-connector/blob/master/docs/02-aac-advanced/troubleshooting.md" target="_blank">Troubleshooting</a></h3>
+      <p>Common messages and how to fix them.</p>
+    </div>
+    <div class="feature-card">
+      <h3><a href="https://github.com/WebberZone/webberzone-ai-account-connector/blob/master/docs/03-aac-developer-docs/hooks-reference.md" target="_blank">Hooks and internals</a></h3>
+      <p>Provider IDs, filters, storage keys and AJAX actions for developers.</p>
+    </div>
+  </div>
 </div>
 
 <div class="home-section" style="padding-top:0;">

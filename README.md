@@ -25,6 +25,13 @@ Connect your ChatGPT and Grok accounts to the WordPress AI Client from **Setting
 - Disconnect at any time; the plugin attempts to revoke the sign-in with the provider
 - Per-site connections on multisite
 
+## Documentation
+
+- [Installing and connecting your accounts](docs/01-aac-getting-started/installing-and-connecting.md)
+- [How sign-in and storage work](docs/02-aac-advanced/how-sign-in-works.md)
+- [Troubleshooting](docs/02-aac-advanced/troubleshooting.md)
+- [Hooks and internals reference](docs/03-aac-developer-docs/hooks-reference.md)
+
 ## External services
 
 The plugin contacts the provider when you use its connector: sign-in (device code request and token exchange), token refresh, a background fetch of the available model list, generation requests (which can include prompts, images and settings from the requesting WordPress feature), and revocation on disconnect or uninstall.
