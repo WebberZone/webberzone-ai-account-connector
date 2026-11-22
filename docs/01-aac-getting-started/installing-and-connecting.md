@@ -44,7 +44,7 @@ Every connect dialog opens with a warning that you must accept before anything s
 1. Go to **Settings → Connectors** and choose **Sign in with ChatGPT** on the ChatGPT Account card.
 2. Read the warning and tick the box to continue.
 3. Approve access on the ChatGPT sign-in page that opens, and sign in if asked.
-4. Your browser is then sent to an address starting with `http://127.0.0.1` that cannot load. That is expected: the address contains the authorization code for your site.
+4. Your browser then shows an error page ("This site can't be reached") at an address starting with `http://127.0.0.1:1455`. That is expected: OpenAI can only redirect to your own computer, and the address contains the sign-in for your site.
 5. Copy the full address from the browser's address bar, paste it into the dialog, and choose **Connect**. The card shows **Connected** with the account email.
 
 The sign-in is valid for up to 15 minutes. The ChatGPT connector supports text generation only.
@@ -67,7 +67,7 @@ If the WordPress AI plugin shows a connector approval notice, approve **ChatGPT 
 
 ## Disconnect
 
-Choose **Disconnect** on the provider's card. The plugin removes the stored sign-in from your site first, then asks the provider to revoke it. If the provider does not confirm the revocation, a notice recommends signing out of all sessions in your account settings.
+Choose **Disconnect** on the provider's card. For ChatGPT, the card also has a **Manage access in ChatGPT settings** link, where you can see this site's access and choose **Remove access**. The plugin removes the stored sign-in from your site first, then asks the provider to revoke it. If the provider does not confirm the revocation, a notice recommends removing this site's access in your account settings, with a direct link for ChatGPT.
 
 ## Multisite
 

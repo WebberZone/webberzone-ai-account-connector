@@ -53,6 +53,7 @@ abstract class Connectors {
 				'noteUrl'    => $note['url'],
 				'warning'    => $config::warning(),
 				'pasteLabel' => $config::paste_label(),
+				'manageUrl'  => $config::manage_url(),
 				'strings'    => array(
 					'signIn'        => $config::sign_in_label(),
 					'browserStep'   => $config::browser_step(),
@@ -65,6 +66,7 @@ abstract class Connectors {
 					'connect'       => __( 'Connect', 'webberzone-ai-account-connector' ),
 					'tryAgain'      => __( 'Try again', 'webberzone-ai-account-connector' ),
 					'cancel'        => __( 'Cancel', 'webberzone-ai-account-connector' ),
+					'manage'        => $config::manage_label(),
 					'connected'     => __( 'Connected', 'webberzone-ai-account-connector' ),
 					'disconnect'    => __( 'Disconnect', 'webberzone-ai-account-connector' ),
 					'requestFailed' => __( 'Request failed.', 'webberzone-ai-account-connector' ),

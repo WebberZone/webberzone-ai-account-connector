@@ -186,15 +186,16 @@ abstract class Admin {
 			return;
 		}
 		delete_transient( $key );
+		$message = sprintf(
+			/* translators: %s: service name. */
+			__( 'The account was disconnected from this site, but %s did not confirm that the sign-in was revoked. To make sure it can no longer be used, remove this site\'s access in your account settings.', 'webberzone-ai-account-connector' ),
+			$config::VENDOR
+		);
+		$url = $config::manage_url();
 		printf(
-			'<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
-			esc_html(
-				sprintf(
-					/* translators: %s: service name. */
-					__( 'The account was disconnected from this site, but %s did not confirm that the sign-in was revoked. To make sure it can no longer be used, sign out of all sessions in your account settings.', 'webberzone-ai-account-connector' ),
-					$config::VENDOR
-				)
-			)
+			'<div class="notice notice-warning is-dismissible"><p>%1$s%2$s</p></div>',
+			esc_html( $message ),
+			'' !== $url ? ' <a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $config::manage_label() ) . '</a>' : ''
 		);
 	}
 

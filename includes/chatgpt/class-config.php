@@ -86,7 +86,7 @@ class Config {
 	 * @return string
 	 */
 	public static function browser_paste() {
-		return __( '2. Your browser will then be sent to an address starting with http://127.0.0.1 that cannot load. That is expected. Copy the full address from the address bar and paste it below. It is valid for 15 minutes.', 'webberzone-ai-account-connector' );
+		return __( '2. After you approve, your browser shows an error page ("This site can\'t be reached") at an address starting with http://127.0.0.1:1455. That is expected: the address holds your sign-in. Copy the whole address from the address bar and paste it below. It is valid for 15 minutes.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -97,7 +97,34 @@ class Config {
 	 * @return string
 	 */
 	public static function paste_label() {
-		return __( 'Address from your browser', 'webberzone-ai-account-connector' );
+		return __( 'Full address from the error page (starts with http://127.0.0.1)', 'webberzone-ai-account-connector' );
+	}
+
+	/**
+	 * Where the user can see and remove this site's access, in ChatGPT settings.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string URL.
+	 */
+	public static function manage_url() {
+		$saved = get_option( OAuth::CLIENT_OPTION );
+		$args  = array( 'view' => 'linked-apps' );
+		if ( is_array( $saved ) && ! empty( $saved['client_id'] ) ) {
+			$args['client_id'] = $saved['client_id'];
+		}
+		return add_query_arg( $args, 'https://chatgpt.com/settings/security' );
+	}
+
+	/**
+	 * Label for the manage-access link.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function manage_label() {
+		return __( 'Manage access in ChatGPT settings', 'webberzone-ai-account-connector' );
 	}
 
 	/**

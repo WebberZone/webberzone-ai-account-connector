@@ -101,6 +101,28 @@ class Config {
 	}
 
 	/**
+	 * Where the user can see and remove this site's access. xAI has no such page to link to.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string URL, or an empty string.
+	 */
+	public static function manage_url() {
+		return '';
+	}
+
+	/**
+	 * Label for the manage-access link.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function manage_label() {
+		return '';
+	}
+
+	/**
 	 * Note shown before signing in. Text inside <a></a> is linked to the URL, when there is one.
 	 *
 	 * @since 1.0.0

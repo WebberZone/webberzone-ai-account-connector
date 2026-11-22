@@ -280,6 +280,7 @@ function registerAccount( config ) {
 			ConnectorItem,
 			{ className: 'connector-item--' + MODULE, logo, name, description, actionArea },
 			connected && config.account ? el( Text, { variant: 'muted', size: 12 }, config.account ) : null,
+			connected && config.manageUrl ? el( ExternalLink, { href: config.manageUrl }, s.manage ) : null,
 			error && el( Notice, { status: 'error', isDismissible: false }, error ),
 			isOpen &&
 				el( SignInModal, {
