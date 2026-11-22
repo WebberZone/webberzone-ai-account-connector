@@ -27,7 +27,7 @@ Requests go to OpenAI's public Responses API at `api.openai.com/v1` with your ac
 
 ### Grok
 
-xAI has no equivalent program for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools, which is why xAI's consent page is titled "Authorize Grok Build": the device authorization grant (RFC 8628) against `auth.x.ai`. WordPress asks xAI for a short sign-in code and shows it to you. You enter it on xAI's sign-in page, and WordPress checks with xAI every few seconds until you approve, then stores the tokens. Nothing is pasted back, and the device code never leaves your server. The code is valid for 30 minutes. This is not an official xAI program, so use it entirely at your own risk.
+xAI has no equivalent program for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools, which is why xAI's consent page is titled "Sign in to Grok Build": the device authorization grant (RFC 8628) against `auth.x.ai`. WordPress asks xAI for a short sign-in code and shows it to you. You enter it on xAI's sign-in page, and WordPress checks with xAI every few seconds until you approve, then stores the tokens. Nothing is pasted back, and the device code never leaves your server. The code is valid for 30 minutes. This is not an official xAI program, so use it entirely at your own risk.
 
 ### Both
 

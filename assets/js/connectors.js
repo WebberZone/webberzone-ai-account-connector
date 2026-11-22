@@ -102,6 +102,8 @@ function registerAccount( config ) {
 						return;
 					}
 					setAuthorizeUrl( data.authorize_url );
+					setPollSeconds( parseInt( data.interval, 10 ) || 5 );
+					setUserCode( data.user_code || '' );
 					setReady( true );
 					if ( popupAtStart && ! popupAtStart.closed ) {
 						popupAtStart.location.href = data.authorize_url;
@@ -250,7 +252,16 @@ function registerAccount( config ) {
 					ready && el( Text, { as: 'p' }, linked( s.browserStep, authorizeUrl ) ),
 					blocked && el( Text, { as: 'p' }, s.popupBlocked ),
 					ready && el( Text, { as: 'p' }, s.browserPaste ),
+					userCode &&
+						el(
+							VStack,
+							{ spacing: 2 },
+							el( Text, { weight: 600 }, s.codeLabel ),
+							el( 'code', { style: { fontSize: '24px', letterSpacing: '0.1em', userSelect: 'all' } }, userCode ),
+							el( HStack, { justify: 'flex-start' }, el( Spinner ), el( Text, null, s.waiting ) )
+						),
 					ready &&
+						! userCode &&
 						el( TextControl, {
 							label: config.pasteLabel,
 							value: code,
@@ -264,6 +275,7 @@ function registerAccount( config ) {
 						HStack,
 						{ justify: 'flex-start' },
 						ready &&
+							! userCode &&
 							el(
 								Button,
 								{ variant: 'primary', type: 'submit', isBusy: busy, disabled: busy || ! code.trim() },

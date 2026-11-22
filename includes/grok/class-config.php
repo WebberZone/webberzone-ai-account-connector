@@ -130,7 +130,7 @@ class Config {
 	 * @return string
 	 */
 	public static function expect() {
-		return __( 'xAI\'s page will say \'Authorize Grok Build\', because this plugin uses the public Grok Build login rather than an app registered for WebberZone. After you approve access, return here. This page connects on its own, and there is nothing to copy.', 'webberzone-ai-account-connector' );
+		return __( 'xAI\'s page will say \'Sign in to Grok Build\', because this plugin uses the public Grok Build login rather than an app registered for WebberZone. After you approve access, return here. This page connects on its own, and there is nothing to copy.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
