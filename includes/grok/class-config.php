@@ -15,9 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Holds everything the shared files need to know about this provider.
  *
- * The shared files (Admin, Connectors, OAuth_Client, Token_Store, Availability, connectors.js) are
- * identical across the WebberZone account plugins apart from namespace, prefix and text domain;
- * anything that genuinely differs lives here.
+ * The provider-independent classes (Admin, Connectors, OAuth_Client, Token_Store, Availability) and
+ * connectors.js read everything provider-specific from here.
  *
  * @since 1.0.0
  */

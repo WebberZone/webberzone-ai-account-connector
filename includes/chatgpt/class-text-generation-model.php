@@ -124,7 +124,8 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 			return $this->send( $params, false );
 		}
 		if ( ! $response->isSuccessful() ) {
-			throw new RuntimeException( esc_html( sprintf( 'ChatGPT returned HTTP %d: %s', $response->getStatusCode(), self::error_detail( (string) $response->getBody() ) ) ) );
+			/* translators: 1: HTTP status code, 2: error detail. */
+			throw new RuntimeException( esc_html( sprintf( __( 'ChatGPT returned HTTP %1$d: %2$s', 'webberzone-ai-account-connector' ), $response->getStatusCode(), self::error_detail( (string) $response->getBody() ) ) ) );
 		}
 		return $response;
 	}
@@ -147,12 +148,12 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 		/**
 		 * Filters the minimum request timeout in seconds.
 		 *
-		 * @since 1.0.4
+		 * @since 1.0.0
 		 *
 		 * @param float  $minimum  Minimum timeout. 0 for text models, otherwise 180.
 		 * @param string $model_id Model ID, or an empty string when unknown.
 		 */
-		$minimum = (float) apply_filters( 'wzcga_min_timeout', $minimum, $model_id );
+		$minimum = (float) apply_filters( 'wzap_chatgpt_min_timeout', $minimum, $model_id );
 
 		$timeout = $options->getTimeout();
 		if ( null === $timeout || self::default_timeout() === $timeout ) {
@@ -166,7 +167,7 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	/**
 	 * Returns the default timeout the WordPress AI Client sets on every prompt.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @return float
 	 */
@@ -208,12 +209,13 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 				$final = $payload['response'];
 			} elseif ( in_array( $type, array( 'response.failed', 'error' ), true ) ) {
 				$error = $payload['response']['error'] ?? ( $payload['error'] ?? $payload );
-				throw new RuntimeException( esc_html( 'ChatGPT error: ' . ( is_array( $error ) ? ( $error['message'] ?? wp_json_encode( $error ) ) : (string) $error ) ) );
+				/* translators: %s: error message. */
+				throw new RuntimeException( esc_html( sprintf( __( 'ChatGPT error: %s', 'webberzone-ai-account-connector' ), is_array( $error ) ? ( $error['message'] ?? wp_json_encode( $error ) ) : (string) $error ) ) );
 			}
 		}
 
 		if ( null === $final ) {
-			throw new RuntimeException( 'ChatGPT stream ended without a completed response.' );
+			throw new RuntimeException( esc_html__( 'ChatGPT stream ended without a completed response.', 'webberzone-ai-account-connector' ) );
 		}
 		// The backend streams output items individually and may leave response.completed's output empty.
 		if ( empty( $final['output'] ) && $items ) {

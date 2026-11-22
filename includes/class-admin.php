@@ -30,16 +30,23 @@ abstract class Admin {
 	 *
 	 * @var string
 	 */
-	const NONCE = 'wzcga_admin';
+	const NONCE = '';
 
 	/**
 	 * Transient prefix, followed by the user ID, flagging that the last disconnect could not revoke the sign-in.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	const REVOKE_FAILED = 'wzcga_revoke_failed_';
+	const REVOKE_FAILED = '';
+
+	/**
+	 * Whether the salt notice was already printed, so it shows once for both providers.
+	 *
+	 * @var bool
+	 */
+	private static $salt_notice_shown = false;
 
 	/**
 	 * Registers the hooks.
@@ -152,29 +159,23 @@ abstract class Admin {
 	/**
 	 * Warns on Settings → Connectors when the authentication salts live in the database rather than wp-config.php.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 */
 	public static function salt_notice() {
-		$config = static::CONFIG;
-		if ( ! self::on_connectors_screen() || self::salts_in_config() ) {
+		if ( self::$salt_notice_shown || ! self::on_connectors_screen() || self::salts_in_config() ) {
 			return;
 		}
+		self::$salt_notice_shown = true;
 		printf(
 			'<div class="notice notice-warning"><p>%s</p></div>',
-			esc_html(
-				sprintf(
-					/* translators: %s: provider label. */
-					__( 'The key that encrypts the stored %s sign-in is derived from AUTH_KEY and AUTH_SALT. Define them in wp-config.php so the key is not stored in the database alongside the tokens. Changing them disconnects the account, so sign in again afterwards.', 'webberzone-ai-account-connector' ),
-					$config::label()
-				)
-			)
+			esc_html__( 'The key that encrypts the stored ChatGPT and Grok sign-ins is derived from AUTH_KEY and AUTH_SALT. Define them in wp-config.php so the key is not stored in the database alongside the tokens. Changing them disconnects the accounts, so sign in again afterwards.', 'webberzone-ai-account-connector' )
 		);
 	}
 
 	/**
 	 * Warns on Settings → Connectors, once, when the last disconnect could not revoke the sign-in with the provider.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 */
 	public static function revoke_notice() {
 		$config = static::CONFIG;
@@ -198,7 +199,7 @@ abstract class Admin {
 	/**
 	 * Whether the current screen is Settings → Connectors and the user can manage it.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @return bool
 	 */
@@ -210,7 +211,7 @@ abstract class Admin {
 	/**
 	 * Whether wp_salt( 'auth' ) is backed by constants in wp-config.php.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @return bool
 	 */

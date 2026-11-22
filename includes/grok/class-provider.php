@@ -58,7 +58,8 @@ class Provider extends AbstractApiProvider {
 				return new Image_Generation_Model( $model_metadata, $provider_metadata );
 			}
 		}
-		throw new RuntimeException( esc_html( 'Unsupported Grok Account model: ' . $model_metadata->getId() ) );
+		/* translators: %s: model ID. */
+		throw new RuntimeException( esc_html( sprintf( __( 'Unsupported Grok Account model: %s', 'webberzone-ai-account-connector' ), $model_metadata->getId() ) ) );
 	}
 
 	/**

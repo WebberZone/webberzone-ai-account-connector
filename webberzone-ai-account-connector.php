@@ -39,40 +39,13 @@ require_once __DIR__ . '/includes/chatgpt/provider.php';
 require_once __DIR__ . '/includes/grok/provider.php';
 
 /**
- * Maps the standalone plugin files to their provider namespaces.
+ * Maps standalone provider namespaces to their combined equivalents.
  */
 function providers() {
 	return array(
-		'webberzone-chatgpt-account/webberzone-chatgpt-account.php' => __NAMESPACE__ . '\\ChatGPT',
-		'webberzone-grok-account/webberzone-grok-account.php'       => __NAMESPACE__ . '\\Grok',
+		'WebberZone\\ChatGPT_Account' => __NAMESPACE__ . '\\ChatGPT',
+		'WebberZone\\Grok_Account'    => __NAMESPACE__ . '\\Grok',
 	);
-}
-
-/**
- * Checks site and network activation.
- *
- * @param string $plugin Plugin basename.
- */
-function plugin_active( $plugin ) {
-	return in_array( $plugin, (array) get_option( 'active_plugins', array() ), true )
-		|| ( is_multisite() && isset( get_site_option( 'active_sitewide_plugins', array() )[ $plugin ] ) );
-}
-
-/**
- * Transfers an inactive standalone provider's connection.
- *
- * @param string $plugin Standalone plugin basename.
- * @param string $provider Provider namespace.
- */
-function prepare_provider( $plugin, $provider ) {
-	if ( plugin_active( $plugin ) ) {
-		return false;
-	}
-	try {
-		return ( $provider . '\\OAuth' )::migrate();
-	} catch ( \RuntimeException $e ) {
-		return false;
-	}
 }
 
 /**
@@ -80,11 +53,8 @@ function prepare_provider( $plugin, $provider ) {
  */
 function start() {
 	$connectors = array();
-	foreach ( providers() as $plugin => $provider ) {
-		if ( ! prepare_provider( $plugin, $provider ) ) {
-			continue;
-		}
-		if ( ! ( $provider . '\\is_ready' )() ) {
+	foreach ( providers() as $standalone => $provider ) {
+		if ( function_exists( $standalone . '\\register_provider' ) || ! ( $provider . '\\is_ready' )() ) {
 			continue;
 		}
 		add_action( 'init', $provider . '\\register_provider', 6 );
@@ -139,68 +109,13 @@ function enqueue() {
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( Admin::class, 'action_links' ) );
 
 /**
- * Transfers pending connections before the legacy uninstaller can revoke them.
- *
- * @param string $plugin Plugin being deleted.
+ * Warns on the Connectors screen when the ChatGPT connector's dependency is missing.
  */
-function protect_before_legacy_uninstall( $plugin ) {
-	$provider = providers()[ $plugin ] ?? null;
-	if ( null === $provider ) {
-		return;
-	}
-
-	$site_ids = is_multisite() ? get_sites(
-		array(
-			'fields' => 'ids',
-			'number' => 0,
-		)
-	) : array( get_current_blog_id() );
-	foreach ( $site_ids as $site_id ) {
-		$switched = is_multisite() && (int) get_current_blog_id() !== (int) $site_id;
-		if ( $switched ) {
-			switch_to_blog( (int) $site_id );
-		}
-		try {
-			$replacement_active = plugin_active( plugin_basename( __FILE__ ) );
-			$store              = $provider . '\\Token_Store';
-			$has_legacy_tokens  = (bool) get_option( $store::LEGACY_OPTION );
-			$success            = ! $has_legacy_tokens || ( $replacement_active && prepare_provider( $plugin, $provider ) );
-		} finally {
-			if ( $switched ) {
-				restore_current_blog();
-			}
-		}
-		if ( ! $success ) {
-			wp_die( esc_html__( 'The existing account could not be transferred. Keep the standalone plugin installed and verify the connection in Settings → Connectors before trying again.', 'webberzone-ai-account-connector' ) );
-		}
-	}
-}
-add_action( 'pre_uninstall_plugin', __NAMESPACE__ . '\\protect_before_legacy_uninstall' );
-
-/**
- * Shows the next migration step on the relevant admin screens.
- */
-function migration_notice() {
+function admin_notice() {
 	$screen = get_current_screen();
-	if ( ! $screen || ! in_array( $screen->id, array( 'plugins', 'plugins-network', 'options-connectors' ), true ) || ! current_user_can( 'activate_plugins' ) ) {
+	if ( ! $screen || 'options-connectors' !== $screen->id || ! current_user_can( 'activate_plugins' ) || ChatGPT\is_ready() ) {
 		return;
 	}
-	foreach ( providers() as $plugin => $provider ) {
-		$config = $provider . '\\Config';
-		$store  = $provider . '\\Token_Store';
-		if ( plugin_active( $plugin ) ) {
-			/* translators: %s: provider name. */
-			$message = sprintf( __( 'Deactivate the standalone %s plugin, then verify the existing connection in Settings → Connectors before deleting it.', 'webberzone-ai-account-connector' ), $config::label() );
-		} elseif ( get_option( $store::LEGACY_OPTION ) ) {
-			/* translators: %s: provider name. */
-			$message = sprintf( __( 'The existing %s connection could not be transferred. Keep the standalone plugin installed until you can verify the connection in Settings → Connectors.', 'webberzone-ai-account-connector' ), $config::label() );
-		} elseif ( __NAMESPACE__ . '\\ChatGPT' === $provider && ! ChatGPT\is_ready() ) {
-			$message = __( 'To use the ChatGPT connector, activate a compatible version of AI Provider for OpenAI.', 'webberzone-ai-account-connector' );
-		} else {
-			continue;
-		}
-		printf( '<div class="notice notice-warning"><p>%s</p></div>', esc_html( $message ) );
-	}
+	printf( '<div class="notice notice-warning"><p>%s</p></div>', esc_html__( 'To use the ChatGPT connector, activate a compatible version of AI Provider for OpenAI.', 'webberzone-ai-account-connector' ) );
 }
-add_action( 'admin_notices', __NAMESPACE__ . '\\migration_notice' );
-add_action( 'network_admin_notices', __NAMESPACE__ . '\\migration_notice' );
+add_action( 'admin_notices', __NAMESPACE__ . '\\admin_notice' );

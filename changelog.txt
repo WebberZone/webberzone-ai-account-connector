@@ -1,0 +1,7 @@
+== Changelog ==
+
+= 1.0.0 =
+
+**Added**
+
+* Initial release: connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors, with text and image generation.

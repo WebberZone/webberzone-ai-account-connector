@@ -109,7 +109,8 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 	 */
 	public function getModelMetadata( string $model_id ): ModelMetadata {
 		if ( ! $this->hasModelMetadata( $model_id ) ) {
-			throw new InvalidArgumentException( esc_html( sprintf( 'No ChatGPT Account model with ID %s.', $model_id ) ) );
+			/* translators: %s: model ID. */
+			throw new InvalidArgumentException( esc_html( sprintf( __( 'No ChatGPT Account model with ID %s.', 'webberzone-ai-account-connector' ), $model_id ) ) );
 		}
 		return $this->models[ $model_id ];
 	}
@@ -142,7 +143,7 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 		 *
 		 * @param array<string, string> $models Model ID => display name.
 		 */
-		return (array) apply_filters( 'wzcga_fallback_models', self::FALLBACK_MODELS );
+		return (array) apply_filters( 'wzap_chatgpt_fallback_models', self::FALLBACK_MODELS );
 	}
 
 	/**

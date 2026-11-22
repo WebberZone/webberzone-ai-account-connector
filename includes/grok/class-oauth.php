@@ -198,7 +198,7 @@ class OAuth extends OAuth_Client {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @param array $tokens Current token data.
 	 */

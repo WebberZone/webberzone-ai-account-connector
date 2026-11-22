@@ -195,7 +195,7 @@ class OAuth extends OAuth_Client {
 	 *
 	 * Sent as JSON, like the refresh request; the form-encoded variant does not report unknown tokens.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @param array $tokens Current token data.
 	 */

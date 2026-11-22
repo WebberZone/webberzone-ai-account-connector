@@ -86,6 +86,6 @@ class Account_Authentication extends ApiKeyRequestAuthentication {
 		 *
 		 * @param string $version Version string.
 		 */
-		return (string) apply_filters( 'wzcga_codex_client_version', self::CODEX_CLIENT_VERSION );
+		return (string) apply_filters( 'wzap_chatgpt_codex_client_version', self::CODEX_CLIENT_VERSION );
 	}
 }

@@ -21,74 +21,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Token_Store {
 
-	const KEY_CONTEXT   = '';
-	const LEGACY_OPTION = '';
+	const KEY_CONTEXT = '';
 
-
-
-	/** Atomically transfers a valid legacy grant. */
-	public static function move_legacy_option() {
-		global $wpdb;
-
-		$legacy = static::LEGACY_OPTION;
-		$target = static::OPTION;
-		wp_cache_delete( $legacy, 'options' );
-		wp_cache_delete( $target, 'options' );
-		wp_cache_delete( 'notoptions', 'options' );
-		$encrypted = get_option( $legacy, '' );
-		if ( '' === $encrypted ) {
-			return true;
-		}
-		if ( false !== get_option( $target ) ) {
-			return false;
-		}
-		if ( empty( static::decrypt( $encrypted )['access_token'] ) ) {
-			return false;
-		}
-
-		// Rename the row in place so an older uninstaller cannot revoke a duplicate grant.
-		$moved = $wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- wp_options requires a single atomic rename.
-			$wpdb->options,
-			array(
-				'option_name' => $target,
-				'autoload'    => 'off',
-			),
-			array(
-				'option_name'  => $legacy,
-				'option_value' => $encrypted,
-			)
-		);
-		wp_cache_delete( $legacy, 'options' );
-		wp_cache_delete( $target, 'options' );
-		wp_cache_delete( 'notoptions', 'options' );
-
-		return 1 === $moved;
-	}
 
 	/**
 	 * Option that holds the encrypted token payload.
 	 *
 	 * @var string
 	 */
-	const OPTION = 'wzcga_tokens';
+	const OPTION = '';
 
 	/**
 	 * Transient that caches the live model list.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	const MODELS_KEY = 'wzcga_models';
+	const MODELS_KEY = '';
 
 	/**
 	 * Transient set when the live model list could not be fetched.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	const MODELS_FAILED_KEY = 'wzcga_models_failed';
+	const MODELS_FAILED_KEY = '';
 
 	/**
 	 * Returns the decrypted token data, or null when not connected.
@@ -117,7 +76,7 @@ abstract class Token_Store {
 	/**
 	 * Encrypts an array into a base64 envelope.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @param array $data Data to encrypt.
 	 * @return string
@@ -130,7 +89,7 @@ abstract class Token_Store {
 	/**
 	 * Decrypts an envelope produced by encrypt().
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @param mixed $raw Stored value.
 	 * @return array|null Null when missing, tampered or encrypted with another key.

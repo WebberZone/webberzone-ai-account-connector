@@ -56,7 +56,7 @@ abstract class Connectors {
 					'deviceStep'    => $config::device_step(),
 					'enterCode'     => __( '2. Enter this code:', 'webberzone-ai-account-connector' ),
 					'requesting'    => __( 'Requesting a sign-in code…', 'webberzone-ai-account-connector' ),
-					'waiting'       => __( 'Waiting for you to approve the sign-in. The code expires in 15 minutes.', 'webberzone-ai-account-connector' ),
+					'waiting'       => __( 'Waiting for you to approve the sign-in. The code expires after up to 15 minutes.', 'webberzone-ai-account-connector' ),
 					'copy'          => __( 'Copy', 'webberzone-ai-account-connector' ),
 					'copied'        => __( 'Copied', 'webberzone-ai-account-connector' ),
 					'tryAgain'      => __( 'Try again', 'webberzone-ai-account-connector' ),

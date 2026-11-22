@@ -28,18 +28,6 @@ abstract class OAuth_Client {
 	const CONFIG      = null;
 	const FLOW_PREFIX = '';
 
-
-
-	/** Transfers a connection under the legacy refresh lock. */
-	public static function migrate() {
-		$token_store = static::TOKEN_STORE;
-		if ( ! get_option( $token_store::LEGACY_OPTION ) ) {
-			return true;
-		}
-
-		return static::with_lock( array( static::TOKEN_STORE, 'move_legacy_option' ) );
-	}
-
 	/**
 	 * Fallback lifetime of a device code, in seconds.
 	 *
@@ -52,7 +40,7 @@ abstract class OAuth_Client {
 	 *
 	 * @var string
 	 */
-	const LOCK_OPTION = 'wzcga_refresh_lock';
+	const LOCK_OPTION = '';
 
 	/**
 	 * Refresh access tokens this many seconds before they expire. Subclasses override this.
@@ -64,7 +52,7 @@ abstract class OAuth_Client {
 	/**
 	 * Seconds to wait before retrying a failed refresh while the access token is still valid.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @var int
 	 */
@@ -104,7 +92,7 @@ abstract class OAuth_Client {
 	/**
 	 * Sends the request that revokes the refresh token.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @param  array $tokens Current token data.
 	 * @return array HTTP response.
@@ -143,7 +131,6 @@ abstract class OAuth_Client {
 	 * The local tokens are deleted first, so the site is disconnected even when revocation fails.
 	 *
 	 * @since 1.0.0
-	 * @since 1.0.4 Revokes the refresh token and returns whether that succeeded.
 	 *
 	 * @return bool True if the refresh token was revoked or there was none to revoke.
 	 */
@@ -163,7 +150,7 @@ abstract class OAuth_Client {
 	/**
 	 * Revokes a refresh token with the provider.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @param  array $tokens Token data.
 	 * @return bool True if the provider accepted the revocation or there was no refresh token.
@@ -221,9 +208,7 @@ abstract class OAuth_Client {
 			wp_cache_delete( $key, 'transient' );
 			wp_cache_delete( '_transient_' . $key, 'options' );
 		}
-		$flow = get_transient( $key );
-		// Flows started before encryption are stored as plain arrays.
-		return is_array( $flow ) ? $flow : $token_store::decrypt( $flow );
+		return $token_store::decrypt( get_transient( $key ) );
 	}
 
 	/**
@@ -259,7 +244,7 @@ abstract class OAuth_Client {
 	/**
 	 * Returns the OAuth error code from a decoded response body.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @param mixed $body Decoded response body.
 	 * @return string Error code, or an empty string.
@@ -275,7 +260,7 @@ abstract class OAuth_Client {
 	/**
 	 * Stores the pending flow, encrypted.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.0
 	 *
 	 * @param array $flow Pending flow.
 	 * @param int   $ttl  Lifetime in seconds.
@@ -401,7 +386,7 @@ abstract class OAuth_Client {
 	 *
 	 * Must be called while holding the lock.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @param  array            $tokens Current token data.
 	 * @param  bool             $force  Whether the refresh was forced because the provider rejected the access token.
@@ -422,7 +407,7 @@ abstract class OAuth_Client {
 	/**
 	 * Whether refreshing is paused after a failure and the access token is still valid.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @param  array $tokens Token data.
 	 * @return bool
@@ -455,7 +440,6 @@ abstract class OAuth_Client {
 	 * Uses the stored expiry when there is one, otherwise the access token's own exp claim.
 	 *
 	 * @since 1.0.0
-	 * @since 1.0.4 Added the `$margin` parameter.
 	 *
 	 * @param  array    $tokens Token data.
 	 * @param  int|null $margin Seconds before expiry that count as expiring; REFRESH_MARGIN when null, 0 for expired.

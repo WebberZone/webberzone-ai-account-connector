@@ -1,0 +1,48 @@
+title: WebberZone AI Account Connector
+description: Documentation for WebberZone AI Account Connector — use your ChatGPT and Grok accounts in the WordPress AI Client.
+url: https://webberzone.github.io
+baseurl: /webberzone-ai-account-connector
+
+plugin_name: WebberZone AI Account Connector
+plugin_slug: webberzone-ai-account-connector
+
+permalink: pretty
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules
+  - build
+  - docs
+  - phpcompat-tools
+  - includes
+  - languages
+  - uninstall.php
+  - assets
+  - build-zip.sh
+  - build-assets.js
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+  - composer.json
+  - composer.lock
+  - readme.txt
+  - changelog.txt
+  - "*.php"
+  - "*.dist"
+  - "*.neon"
+  - README.md
+  - AGENTS.md
+  - CLAUDE.md

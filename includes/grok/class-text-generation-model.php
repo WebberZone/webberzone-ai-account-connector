@@ -88,12 +88,12 @@ class Text_Generation_Model extends AbstractOpenAiCompatibleTextGenerationModel 
 		/**
 		 * Filters the minimum request timeout in seconds.
 		 *
-		 * @since 1.0.4
+		 * @since 1.0.0
 		 *
 		 * @param float  $minimum  Minimum timeout. 0 for non-reasoning models, otherwise 180.
 		 * @param string $model_id Model ID, or an empty string when unknown.
 		 */
-		$minimum = (float) apply_filters( 'wzgka_min_timeout', $minimum, $model_id );
+		$minimum = (float) apply_filters( 'wzap_grok_min_timeout', $minimum, $model_id );
 
 		$timeout = $options->getTimeout();
 		if ( null === $timeout || self::default_timeout() === $timeout ) {
@@ -107,7 +107,7 @@ class Text_Generation_Model extends AbstractOpenAiCompatibleTextGenerationModel 
 	/**
 	 * Returns the default timeout the WordPress AI Client sets on every prompt.
 	 *
-	 * @since 1.0.4
+	 * @since 1.0.0
 	 *
 	 * @return float
 	 */
