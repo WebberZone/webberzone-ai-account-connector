@@ -69,7 +69,7 @@ Tokens are encrypted with libsodium. The key is derived from `AUTH_KEY` and `AUT
 
 ## AJAX Actions
 
-Each provider registers `wp_ajax_{prefix}_start`, `_poll`, `_cancel` and `_disconnect`, where the prefix is `wzap_chatgpt` or `wzap_grok`. Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability.
+Each provider registers `wp_ajax_{prefix}_start`, `_poll`, `_exchange`, `_cancel` and `_disconnect`, where the prefix is `wzap_chatgpt` or `wzap_grok`. Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability. `_exchange` is only used by Grok: it posts the pasted authorization code. ChatGPT ignores it.
 
 ## Layout
 

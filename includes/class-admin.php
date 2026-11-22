@@ -56,6 +56,7 @@ abstract class Admin {
 	public static function init() {
 		add_action( 'wp_ajax_' . static::PREFIX . '_start', array( static::class, 'ajax_start' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_poll', array( static::class, 'ajax_poll' ) );
+		add_action( 'wp_ajax_' . static::PREFIX . '_exchange', array( static::class, 'ajax_exchange' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_cancel', array( static::class, 'ajax_cancel' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_disconnect', array( static::class, 'ajax_disconnect' ) );
 		add_action( 'admin_notices', array( static::class, 'salt_notice' ) );
@@ -76,7 +77,7 @@ abstract class Admin {
 	}
 
 	/**
-	 * AJAX: starts the device-code flow.
+	 * AJAX: starts sign-in. ChatGPT requests a device code; Grok returns the xAI consent URL.
 	 *
 	 * @since 1.0.0
 	 */
@@ -107,6 +108,30 @@ abstract class Admin {
 					'retryable' => in_array( $e->getCode(), array( 408, 429 ), true ) || $e->getCode() >= 500,
 				)
 			);
+		}
+	}
+
+	/**
+	 * AJAX: exchanges a code pasted from the xAI consent screen.
+	 *
+	 * ChatGPT does not use this action.
+	 *
+	 * @since 1.0.1
+	 */
+	public static function ajax_exchange() {
+		$oauth = static::OAUTH;
+		check_ajax_referer( static::NONCE );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( __( 'Sorry, you are not allowed to do that.', 'webberzone-ai-account-connector' ), 403 );
+		}
+		if ( ! method_exists( $oauth, 'exchange_authorization_code' ) ) {
+			wp_send_json_error( __( 'This account does not use a pasted sign-in code.', 'webberzone-ai-account-connector' ) );
+		}
+		$code = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
+		try {
+			wp_send_json_success( $oauth::exchange_authorization_code( $code ) );
+		} catch ( \Exception $e ) {
+			wp_send_json_error( html_entity_decode( $e->getMessage(), ENT_QUOTES ) );
 		}
 	}
 

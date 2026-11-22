@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 1.0.1 =
+
+**Changed**
+
+* Grok sign-in now opens the xAI consent screen, the same kind of account login Warp uses. Paste the code that page shows to finish connecting. ChatGPT still uses a device code.
+
 = 1.0.0 =
 
 **Added**

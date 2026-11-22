@@ -46,9 +46,10 @@ Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because t
 
 1. Make sure your xAI account has SuperGrok or X Premium.
 2. Go to **Settings → Connectors** and choose **Sign in with xAI** on the Grok Account card.
-3. Open the sign-in page shown, enter the code, and approve.
+3. Approve access on the xAI page that opens. Sign in with your X or xAI account if asked.
+4. That page cannot send you back to WordPress, so it shows a one-time code (it may say to copy it into Grok Build). Paste the code into the dialog and choose **Connect**.
 
-Some plans can sign in but are refused by the xAI API. If that happens, the error appears when you generate content.
+The code is valid for 5 minutes. Some plans can sign in but are refused by the xAI API. If that happens, the error appears when you generate content.
 
 ---
 

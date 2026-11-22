@@ -53,6 +53,17 @@ class Config {
 	}
 
 	/**
+	 * Which sign-in UI the Connectors card should show.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return string 'device' or 'browser'.
+	 */
+	public static function sign_in_flow() {
+		return 'device';
+	}
+
+	/**
 	 * Note shown before signing in. Text inside <a></a> is linked to the URL, when there is one.
 	 *
 	 * @since 1.0.0

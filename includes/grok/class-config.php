@@ -53,6 +53,39 @@ class Config {
 	}
 
 	/**
+	 * Which sign-in UI the Connectors card should show.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return string 'device' or 'browser'.
+	 */
+	public static function sign_in_flow() {
+		return 'browser';
+	}
+
+	/**
+	 * First browser sign-in step. Text inside <a></a> is linked to the consent screen.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return string
+	 */
+	public static function browser_step() {
+		return __( '1. Approve access on <a>the xAI sign-in page</a>. Sign in with your X or xAI account if asked.', 'webberzone-ai-account-connector' );
+	}
+
+	/**
+	 * Explains why a code has to be pasted back.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return string
+	 */
+	public static function browser_paste() {
+		return __( '2. That page cannot return here, so it shows a one-time code (it may say to copy it into Grok Build). Paste the code below. It is valid for 5 minutes.', 'webberzone-ai-account-connector' );
+	}
+
+	/**
 	 * Note shown before signing in. Text inside <a></a> is linked to the URL, when there is one.
 	 *
 	 * @since 1.0.0

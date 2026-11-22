@@ -16,11 +16,11 @@ Connect your ChatGPT and Grok accounts to the WordPress AI Client from **Setting
 
 1. Download the latest ZIP, upload it under Plugins → Add New → Upload Plugin, and activate it.
 2. Go to Settings → Connectors and choose **Sign in with ChatGPT** or **Sign in with xAI** on the matching card.
-3. Open the sign-in page shown, enter the code, and approve the request.
+3. ChatGPT: open the sign-in page, enter the code, and approve. Grok: approve access on the xAI page that opens, then paste the code that page shows back into WordPress.
 
 ## Features
 
-- Device-code sign-in with a separate card and connection for each provider
+- Device-code sign-in for ChatGPT, and browser sign-in for Grok (the same xAI consent screen Warp uses). Each provider has its own card and connection
 - Tokens stored encrypted (key derived from your WordPress authentication salts) and refreshed automatically
 - Disconnect at any time; the plugin attempts to revoke the sign-in with the provider
 - Per-site connections on multisite
@@ -34,9 +34,9 @@ Connect your ChatGPT and Grok accounts to the WordPress AI Client from **Setting
 
 ## External services
 
-The plugin contacts the provider when you use its connector: sign-in (device code request and token exchange), token refresh, a background fetch of the available model list, generation requests (which can include prompts, images and settings from the requesting WordPress feature), and revocation on disconnect or uninstall.
+The plugin contacts the provider when you use its connector: sign-in (a ChatGPT device code, or a Grok authorization-code exchange), token refresh, a background fetch of the available model list, generation requests (which can include prompts, images and settings from the requesting WordPress feature), and revocation on disconnect or uninstall.
 
-**How sign-in works:** WebberZone has no application registered with OpenAI or xAI, and this plugin is not an official integration. It reuses the device-code sign-in flow of the providers' own command-line tools, with those tools' public OAuth client identifiers, and ChatGPT requests identify themselves as the Codex command-line client. This is what lets the plugin use your existing account without an API key. Sign-in and requests go directly between your site and the provider; WebberZone does not receive your tokens or prompts. Use of the plugin is subject to each provider's terms, so check that it complies with yours.
+**How sign-in works:** WebberZone has no application registered with OpenAI or xAI, and this plugin is not an official integration. ChatGPT reuses the device-code sign-in of the Codex command-line tool, and requests identify themselves as that client. Grok reuses the public Grok CLI authorization-code flow (the same consent screen Warp uses for a SuperGrok or X Premium subscription). xAI only allows that client to redirect to `http://127.0.0.1:56121/callback`, which a site cannot receive, so you paste the code the consent screen shows. This is what lets the plugin use your existing account without an API key. Sign-in and requests go directly between your site and the provider; WebberZone does not receive your tokens or prompts. Use of the plugin is subject to each provider's terms, so check that it complies with yours.
 
 - ChatGPT: auth.openai.com and chatgpt.com. [Terms](https://openai.com/policies/terms-of-use/), [Privacy](https://openai.com/policies/privacy-policy/)
 - Grok: auth.x.ai and api.x.ai. [Terms](https://x.ai/legal/terms-of-service), [Privacy](https://x.ai/legal/privacy-policy)

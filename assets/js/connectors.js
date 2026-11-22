@@ -25,6 +25,7 @@ const {
 	Modal,
 	Notice,
 	Spinner,
+	TextControl,
 	__experimentalHStack: HStack,
 	__experimentalVStack: VStack,
 	__experimentalText: Text,
@@ -36,12 +37,12 @@ const { providers = [] } = dataElement ? JSON.parse( dataElement.textContent ) :
 function registerAccount( config ) {
 	const s = config.strings || {};
 
-	function call( action ) {
+	function call( action, fields ) {
 		return window
 			.fetch( config.ajaxUrl, {
 				method: 'POST',
 				credentials: 'same-origin',
-				body: new URLSearchParams( { action: config.prefix + '_' + action, _ajax_nonce: config.nonce } ),
+				body: new URLSearchParams( Object.assign( { action: config.prefix + '_' + action, _ajax_nonce: config.nonce }, fields || {} ) ),
 			} )
 			.then( ( response ) => response.json() )
 			.then( ( result ) => {
@@ -63,6 +64,142 @@ function registerAccount( config ) {
 
 	function Note() {
 		return config.note ? el( Text, { as: 'p' }, linked( config.note, config.noteUrl ) ) : null;
+	}
+
+	function openConsentWindow() {
+		return window.open( 'about:blank', 'wzap-xai-signin' );
+	}
+
+	function BrowserSignIn( { onClose, onConnected, popupRef } ) {
+		const [ authorizeUrl, setAuthorizeUrl ] = useState( '' );
+		const [ blocked, setBlocked ] = useState( false );
+		const [ code, setCode ] = useState( '' );
+		const [ error, setError ] = useState( null );
+		const [ busy, setBusy ] = useState( false );
+		const [ ready, setReady ] = useState( false );
+		const [ attempt, setAttempt ] = useState( 0 );
+
+		useEffect( () => {
+			let active = true;
+			const popupAtStart = popupRef.current;
+			setReady( false );
+			setError( null );
+			setCode( '' );
+			setBlocked( ! popupAtStart );
+
+			call( 'start' )
+				.then( ( data ) => {
+					if ( ! active ) {
+						return;
+					}
+					setAuthorizeUrl( data.authorize_url );
+					setReady( true );
+					if ( popupAtStart && ! popupAtStart.closed ) {
+						popupAtStart.location.href = data.authorize_url;
+						setBlocked( false );
+					} else {
+						setBlocked( true );
+					}
+				} )
+				.catch( ( e ) => {
+					if ( ! active ) {
+						return;
+					}
+					if ( popupAtStart && ! popupAtStart.closed ) {
+						popupAtStart.close();
+					}
+					setError( e.message );
+				} );
+
+			return () => {
+				active = false;
+			};
+		}, [ attempt ] );
+
+		useEffect( () => {
+			return () => {
+				const popup = popupRef.current;
+				if ( ! popup || popup.closed ) {
+					return;
+				}
+				try {
+					if ( 'about:blank' === popup.location.href ) {
+						popup.close();
+					}
+				} catch ( err ) {
+					// Already on the xAI page, which this window cannot inspect. Leave it open.
+				}
+			};
+		}, [] );
+
+		const close = () => {
+			call( 'cancel' ).catch( () => {} );
+			onClose();
+		};
+
+		const retry = () => {
+			popupRef.current = openConsentWindow();
+			setAttempt( attempt + 1 );
+		};
+
+		const submit = ( event ) => {
+			event.preventDefault();
+			const pasted = code.trim();
+			if ( busy || ! pasted ) {
+				return;
+			}
+			setBusy( true );
+			setError( null );
+			call( 'exchange', { code: pasted } )
+				.then( () => onConnected() )
+				.catch( ( e ) => {
+					setError( e.message );
+					setBusy( false );
+				} );
+		};
+
+		let body;
+		if ( ! ready && ! error ) {
+			body = el( HStack, { justify: 'flex-start' }, el( Spinner ), el( Text, null, s.opening ) );
+		} else {
+			body = el(
+				'form',
+				{ onSubmit: submit },
+				el(
+					VStack,
+					{ spacing: 4 },
+					el( Note ),
+					error && el( Notice, { status: 'error', isDismissible: false }, error ),
+					ready && el( Text, { as: 'p' }, linked( s.browserStep, authorizeUrl ) ),
+					blocked && el( Text, { as: 'p' }, s.popupBlocked ),
+					ready && el( Text, { as: 'p' }, s.browserPaste ),
+					ready &&
+						el( TextControl, {
+							label: s.pasteLabel,
+							value: code,
+							onChange: setCode,
+							autoComplete: 'off',
+							spellCheck: 'false',
+							__next40pxDefaultSize: true,
+							__nextHasNoMarginBottom: true,
+						} ),
+					el(
+						HStack,
+						{ justify: 'flex-start' },
+						ready &&
+							el(
+								Button,
+								{ variant: 'primary', type: 'submit', isBusy: busy, disabled: busy || ! code.trim() },
+								s.connect
+							),
+						error && el( Button, { variant: 'secondary', type: 'button', onClick: retry }, s.tryAgain ),
+						el( Button, { variant: 'tertiary', type: 'button', onClick: close }, s.cancel )
+					)
+				)
+			);
+		}
+
+		return el( Modal, { title: s.signIn, onRequestClose: close, size: 'medium' }, body );
 	}
 
 	function SignInModal( { onClose, onConnected } ) {
@@ -179,6 +316,7 @@ function registerAccount( config ) {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const [ isBusy, setIsBusy ] = useState( false );
 		const [ error, setError ] = useState( null );
+		const popupRef = useRef( null );
 		const connected = !! config.connected;
 
 		const disconnect = () => {
@@ -207,7 +345,20 @@ function registerAccount( config ) {
 						{ variant: 'tertiary', size: 'compact', isDestructive: true, isBusy, disabled: isBusy, onClick: disconnect },
 						s.disconnect
 				  )
-				: el( Button, { variant: 'secondary', size: 'compact', onClick: () => setIsOpen( true ) }, s.signIn )
+				: el(
+						Button,
+						{
+							variant: 'secondary',
+							size: 'compact',
+							onClick: () => {
+								if ( 'browser' === config.signInFlow ) {
+									popupRef.current = openConsentWindow();
+								}
+								setIsOpen( true );
+							},
+						},
+						s.signIn
+				  )
 		);
 
 		return el(
@@ -216,9 +367,10 @@ function registerAccount( config ) {
 			connected && config.account ? el( Text, { variant: 'muted', size: 12 }, config.account ) : null,
 			error && el( Notice, { status: 'error', isDismissible: false }, error ),
 			isOpen &&
-				el( SignInModal, {
+				el( 'browser' === config.signInFlow ? BrowserSignIn : SignInModal, {
 					onClose: () => setIsOpen( false ),
 					onConnected: () => window.location.reload(),
+					popupRef,
 				} )
 		);
 	}
