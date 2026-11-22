@@ -54,8 +54,8 @@ The sign-in is valid for up to 15 minutes. The ChatGPT connector supports text g
 1. Make sure your xAI account has SuperGrok or X Premium.
 2. Go to **Settings → Connectors** and choose **Sign in with xAI** on the Grok Account card.
 3. Read the warning and tick the box to continue.
-4. Approve access on the xAI sign-in page that opens, and sign in with your X or xAI account if asked. The page says "Authorize Grok Build", because the plugin uses xAI's public Grok Build login rather than an app registered for WebberZone.
-5. xAI cannot return to WordPress, so either its page shows a one-time code, or your browser shows "This site can't be reached" at an address starting with `http://127.0.0.1:56121`. Paste the code, or that whole address, into the dialog and choose **Connect**. It is valid for 5 minutes.
+4. Open the xAI sign-in page from the dialog, and sign in with your X or xAI account if asked. The page says "Authorize Grok Build", because the plugin uses xAI's public Grok Build login rather than an app registered for WebberZone.
+5. Check that the code on xAI's page matches the one in the dialog, then approve. The dialog connects on its own, so there is nothing to copy. The code is valid for 30 minutes.
 
 Some plans can sign in but are refused by the xAI API. If that happens, the error appears when you generate content.
 

@@ -56,6 +56,7 @@ abstract class Admin {
 	public static function init() {
 		add_action( 'wp_ajax_' . static::PREFIX . '_start', array( static::class, 'ajax_start' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_exchange', array( static::class, 'ajax_exchange' ) );
+		add_action( 'wp_ajax_' . static::PREFIX . '_poll', array( static::class, 'ajax_poll' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_cancel', array( static::class, 'ajax_cancel' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_disconnect', array( static::class, 'ajax_disconnect' ) );
 		add_action( 'admin_notices', array( static::class, 'salt_notice' ) );
@@ -107,6 +108,21 @@ abstract class Admin {
 		$input = isset( $_POST['code'] ) ? substr( (string) preg_replace( '/[\x00-\x1F\x7F]+/', '', wp_unslash( $_POST['code'] ) ), 0, 4096 ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified in verify().
 		try {
 			wp_send_json_success( $oauth::exchange_authorization_code( $input ) );
+		} catch ( \Exception $e ) {
+			wp_send_json_error( html_entity_decode( $e->getMessage(), ENT_QUOTES ) );
+		}
+	}
+
+	/**
+	 * AJAX: checks whether the code shown to the administrator was approved.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function ajax_poll() {
+		$oauth = static::OAUTH;
+		self::verify();
+		try {
+			wp_send_json_success( $oauth::poll_sign_in() );
 		} catch ( \Exception $e ) {
 			wp_send_json_error( html_entity_decode( $e->getMessage(), ENT_QUOTES ) );
 		}

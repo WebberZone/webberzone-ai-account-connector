@@ -60,18 +60,18 @@ class Config {
 	 * @return string
 	 */
 	public static function browser_step() {
-		return __( '1. Approve access on <a>the xAI sign-in page</a>. Sign in with your X or xAI account if asked.', 'webberzone-ai-account-connector' );
+		return __( '1. Open <a>the xAI sign-in page</a>. Sign in with your X or xAI account if asked.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
-	 * Explains why a code has to be pasted back.
+	 * Explains how to finish the device-code sign-in.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
 	public static function browser_paste() {
-		return __( '2. That page cannot return here, so it shows a one-time code (it may say to copy it into Grok Build), or your browser shows an error page at an address starting with http://127.0.0.1:56121. Paste the code or that whole address below. It is valid for 5 minutes.', 'webberzone-ai-account-connector' );
+		return __( '2. Check that the code on that page matches the one below, then approve access. This page connects on its own, so there is nothing to copy. The code is valid for 30 minutes.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -90,14 +90,14 @@ class Config {
 	}
 
 	/**
-	 * Label for the field the sign-in code is pasted into.
+	 * Label for the paste field. Grok has none; the code is entered on xAI's page.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
 	public static function paste_label() {
-		return __( 'Sign-in code or address', 'webberzone-ai-account-connector' );
+		return '';
 	}
 
 	/**
@@ -130,7 +130,7 @@ class Config {
 	 * @return string
 	 */
 	public static function expect() {
-		return __( 'xAI\'s page will say \'Authorize Grok Build\', because this plugin uses the public Grok Build login rather than an app registered for WebberZone. After approving access, xAI shows a one-time code, or your browser shows \'This site can\'t be reached.\' at an address starting with http://127.0.0.1:56121. Copy the code or that address, return here, and paste it below.', 'webberzone-ai-account-connector' );
+		return __( 'xAI\'s page will say \'Authorize Grok Build\', because this plugin uses the public Grok Build login rather than an app registered for WebberZone. After you approve access, return here. This page connects on its own, and there is nothing to copy.', 'webberzone-ai-account-connector' );
 	}
 
 	/**

@@ -75,6 +75,8 @@ function registerAccount( config ) {
 		const [ acknowledged, setAcknowledged ] = useState( 0 === warning.length );
 		const [ checked, setChecked ] = useState( false );
 		const [ authorizeUrl, setAuthorizeUrl ] = useState( '' );
+		const [ userCode, setUserCode ] = useState( '' );
+		const [ pollSeconds, setPollSeconds ] = useState( 5 );
 		const [ blocked, setBlocked ] = useState( false );
 		const [ code, setCode ] = useState( '' );
 		const [ error, setError ] = useState( null );
@@ -91,6 +93,7 @@ function registerAccount( config ) {
 			setReady( false );
 			setError( null );
 			setCode( '' );
+			setUserCode( '' );
 			setBlocked( ! popupAtStart );
 
 			call( 'start', { acknowledged: '1' } )
@@ -121,6 +124,40 @@ function registerAccount( config ) {
 				active = false;
 			};
 		}, [ acknowledged, attempt ] );
+
+		useEffect( () => {
+			if ( ! userCode ) {
+				return undefined;
+			}
+			let active = true;
+			let timer;
+			const interval = ( pollSeconds + 1 ) * 1000;
+			const poll = () => {
+				call( 'poll' )
+					.then( ( status ) => {
+						if ( ! active ) {
+							return;
+						}
+						if ( 'connected' === status ) {
+							onConnected();
+						} else {
+							timer = window.setTimeout( poll, interval );
+						}
+					} )
+					.catch( ( e ) => {
+						if ( active ) {
+							setUserCode( '' );
+							setReady( false );
+							setError( e.message );
+						}
+					} );
+			};
+			timer = window.setTimeout( poll, interval );
+			return () => {
+				active = false;
+				window.clearTimeout( timer );
+			};
+		}, [ userCode ] );
 
 		useEffect( () => {
 			return () => {

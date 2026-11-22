@@ -15,11 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Authorization Code + PKCE sign-in against auth.x.ai, and token refresh.
+ * Device-code sign-in against auth.x.ai (RFC 8628), and token refresh.
  *
- * This uses the public Grok CLI client. xAI only allows the loopback redirect
- * http://127.0.0.1:56121/callback, which a WordPress site cannot receive, so the
- * consent screen shows a code and the site exchanges that code with the PKCE verifier.
+ * This uses the public Grok CLI client. The site shows a short code, the administrator enters it on
+ * xAI's page, and the site polls until xAI confirms. Nothing has to be pasted back.
  *
  * @since 1.0.0
  */
@@ -48,18 +47,11 @@ class OAuth extends OAuth_Client {
 	const SCOPE = 'openid profile email offline_access grok-cli:access api:access';
 
 	/**
-	 * Loopback redirect registered for the public client. Not received by this site.
+	 * Device-code grant type.
 	 *
 	 * @var string
 	 */
-	const REDIRECT_URI = 'http://127.0.0.1:56121/callback';
-
-	/**
-	 * How long a sign-in attempt can be finished, in seconds.
-	 *
-	 * @var int
-	 */
-	const SIGN_IN_TTL = 300;
+	const DEVICE_GRANT = 'urn:ietf:params:oauth:grant-type:device_code';
 
 	/**
 	 * Refresh access tokens this many seconds before they expire (they last about six hours).
@@ -69,31 +61,45 @@ class OAuth extends OAuth_Client {
 	const REFRESH_MARGIN = 3600;
 
 	/**
-	 * Starts a browser sign-in and returns the xAI consent URL.
+	 * Requests a device code and stores the pending flow.
 	 *
-	 * The PKCE verifier stays on the server. The browser only receives the authorize URL.
+	 * The device code stays on the server. The browser only receives the user code and the xAI page to enter it on.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array{authorize_url: string, expires_at: int}
-	 * @throws RuntimeException When the pending sign-in cannot be stored.
+	 * @return array{authorize_url: string, user_code: string, interval: int, expires_at: int}
+	 * @throws RuntimeException When xAI rejects the request.
 	 */
 	public static function start_sign_in() {
 		return static::with_lock(
 			static function () {
-				$verifier  = self::pkce_verifier();
-				$challenge = self::pkce_challenge( $verifier );
-				$state     = self::pkce_verifier();
-				$ttl       = self::SIGN_IN_TTL;
-				$flow      = array(
-					'flow_id'       => wp_generate_uuid4(),
-					'code_verifier' => $verifier,
-					'expires_at'    => time() + $ttl,
+				$response = static::post_form(
+					self::ISSUER . '/oauth2/device/code',
+					array(
+						'client_id' => self::CLIENT_ID,
+						'scope'     => self::SCOPE,
+					)
+				);
+				$body     = static::decode( $response );
+
+				if ( empty( $body['device_code'] ) || empty( $body['user_code'] ) || empty( $body['verification_uri'] ) ) {
+					throw new RuntimeException( esc_html__( 'Unexpected response when requesting a sign-in code.', 'webberzone-ai-account-connector' ) );
+				}
+
+				$ttl  = min( static::FLOW_TTL, max( 60, (int) ( $body['expires_in'] ?? static::FLOW_TTL ) ) );
+				$flow = array(
+					'flow_id'     => wp_generate_uuid4(),
+					'device_code' => (string) $body['device_code'],
+					'interval'    => max( 5, (int) ( $body['interval'] ?? 5 ) ),
+					'expires_at'  => time() + $ttl,
+					'last_poll'   => 0,
 				);
 				static::save_flow( $flow, $ttl );
 
 				return array(
-					'authorize_url' => self::authorize_url( $challenge, $state ),
+					'authorize_url' => (string) ( $body['verification_uri_complete'] ?? $body['verification_uri'] ),
+					'user_code'     => (string) $body['user_code'],
+					'interval'      => $flow['interval'],
 					'expires_at'    => $flow['expires_at'],
 				);
 			}
@@ -101,54 +107,68 @@ class OAuth extends OAuth_Client {
 	}
 
 	/**
-	 * Exchanges the code shown on the xAI consent screen for tokens.
+	 * Checks once whether the code was approved, and stores the tokens if so.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  string $code Authorization code copied from the consent screen, or the address the browser was sent to.
-	 * @return string 'connected'.
-	 * @throws RuntimeException When the attempt expired, the code was rejected, or the response was incomplete.
+	 * @return string 'pending' or 'connected'.
+	 * @throws RuntimeException When the code expired, was declined, or xAI returned an error.
 	 */
-	public static function exchange_authorization_code( $code ) {
-		$code = (string) $code;
-		// When the browser cannot load the loopback redirect, its address carries the code; accept that as well as the bare code.
-		if ( false !== strpos( $code, 'code=' ) ) {
-			parse_str( false !== strpos( $code, '?' ) ? (string) wp_parse_url( $code, PHP_URL_QUERY ) : ltrim( $code, '?' ), $params );
-			if ( ! empty( $params['error'] ) ) {
-				throw new RuntimeException( esc_html__( 'xAI did not grant access. Start again and approve access.', 'webberzone-ai-account-connector' ) );
-			}
-			$code = (string) ( $params['code'] ?? '' );
-		}
-		$code = preg_replace( '/\s+/', '', $code );
-		if ( ! is_string( $code ) || '' === $code || strlen( $code ) > 2048 ) {
-			throw new RuntimeException( esc_html__( 'Paste the code shown on the xAI sign-in page.', 'webberzone-ai-account-connector' ) );
-		}
-
+	public static function poll_sign_in() {
 		$flow = static::with_lock(
 			static function () {
 				$flow = static::fresh_flow();
-				if ( ! is_array( $flow ) || empty( $flow['code_verifier'] ) || $flow['expires_at'] < time() ) {
+				if ( ! is_array( $flow ) || empty( $flow['device_code'] ) || $flow['expires_at'] < time() ) {
 					delete_transient( static::flow_key() );
-					throw new RuntimeException( esc_html__( 'The sign-in expired. Start again and approve access once more.', 'webberzone-ai-account-connector' ) );
+					throw new RuntimeException( esc_html__( 'The sign-in code expired. Start again.', 'webberzone-ai-account-connector' ) );
 				}
+				if ( time() - $flow['last_poll'] < $flow['interval'] ) {
+					return null;
+				}
+				$flow['last_poll'] = time();
+				static::save_flow( $flow, max( 1, $flow['expires_at'] - time() ) );
 				return $flow;
 			}
 		);
+		if ( null === $flow ) {
+			return 'pending';
+		}
 
 		$response = static::post_form(
 			self::ISSUER . '/oauth2/token',
 			array(
-				'grant_type'    => 'authorization_code',
-				'code'          => $code,
-				'redirect_uri'  => self::REDIRECT_URI,
-				'client_id'     => self::CLIENT_ID,
-				'code_verifier' => $flow['code_verifier'],
+				'grant_type'  => self::DEVICE_GRANT,
+				'device_code' => $flow['device_code'],
+				'client_id'   => self::CLIENT_ID,
 			)
 		);
 		$status   = (int) wp_remote_retrieve_response_code( $response );
 		$error    = static::error_code( json_decode( (string) wp_remote_retrieve_body( $response ), true ) );
-		if ( 'invalid_grant' === $error ) {
-			throw new RuntimeException( esc_html__( 'That code was not accepted. Start again, approve access, and paste the new code.', 'webberzone-ai-account-connector' ) );
+
+		if ( 'authorization_pending' === $error || 'slow_down' === $error ) {
+			static::with_lock(
+				static function () use ( $flow, $error ) {
+					$current = static::fresh_flow();
+					if ( ! is_array( $current ) || ! isset( $current['flow_id'] ) || $current['flow_id'] !== $flow['flow_id'] ) {
+						return;
+					}
+					if ( 'slow_down' === $error ) {
+						$current['interval'] += 5;
+					}
+					$current['last_poll'] = time();
+					static::save_flow( $current, max( 1, $current['expires_at'] - time() ) );
+				}
+			);
+			return 'pending';
+		}
+
+		if ( 'access_denied' === $error ) {
+			static::discard_flow( $flow );
+			throw new RuntimeException( esc_html__( 'The sign-in was declined.', 'webberzone-ai-account-connector' ) );
+		}
+		if ( 'expired_token' === $error ) {
+			static::discard_flow( $flow );
+			throw new RuntimeException( esc_html__( 'The sign-in code expired. Start again.', 'webberzone-ai-account-connector' ) );
 		}
 
 		$tokens = static::decode( $response, $status );
@@ -162,59 +182,6 @@ class OAuth extends OAuth_Client {
 			}
 		);
 		return 'connected';
-	}
-
-	/**
-	 * Builds the consent-screen URL.
-	 *
-	 * `plan=generic` is required for this public client. The referrer is only an attribution label.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param  string $challenge PKCE S256 challenge.
-	 * @param  string $state     OAuth state. Not checked on the paste path; PKCE binds the code.
-	 * @return string
-	 */
-	private static function authorize_url( $challenge, $state ) {
-		return add_query_arg(
-			array(
-				'response_type'         => 'code',
-				'client_id'             => self::CLIENT_ID,
-				'redirect_uri'          => self::REDIRECT_URI,
-				'scope'                 => self::SCOPE,
-				'code_challenge'        => $challenge,
-				'code_challenge_method' => 'S256',
-				'state'                 => $state,
-				'plan'                  => 'generic',
-				'referrer'              => 'webberzone',
-			),
-			self::ISSUER . '/oauth2/authorize'
-		);
-	}
-
-	/**
-	 * A PKCE verifier: 32 random bytes, base64url, no padding (43 characters).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string
-	 */
-	private static function pkce_verifier() {
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- PKCE encoding (RFC 7636), not obfuscation.
-		return rtrim( strtr( base64_encode( random_bytes( 32 ) ), '+/', '-_' ), '=' );
-	}
-
-	/**
-	 * S256 challenge for a PKCE verifier.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param  string $verifier PKCE verifier.
-	 * @return string
-	 */
-	private static function pkce_challenge( $verifier ) {
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- PKCE encoding (RFC 7636), not obfuscation.
-		return rtrim( strtr( base64_encode( hash( 'sha256', $verifier, true ) ), '+/', '-_' ), '=' );
 	}
 
 	/**

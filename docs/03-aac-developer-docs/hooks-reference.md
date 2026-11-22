@@ -109,12 +109,13 @@ Tokens are encrypted with libsodium. The key is derived from `AUTH_KEY` and `AUT
 
 ## AJAX Actions
 
-Each provider registers four `wp_ajax_` actions, where the prefix is `wzap_chatgpt` or `wzap_grok`.
+Each provider registers five `wp_ajax_` actions, where the prefix is `wzap_chatgpt` or `wzap_grok`.
 
 | Action | Purpose |
 |---|---|
-| `{prefix}_start` | Starts a sign-in and returns the consent URL. Requires `acknowledged=1`, which the connect dialog sends after the warning is accepted. |
-| `{prefix}_exchange` | Finishes the sign-in from the pasted `code`: the one-time code for Grok, or the redirect address for ChatGPT. |
+| `{prefix}_start` | Starts a sign-in and returns the sign-in URL, plus the code to enter for Grok. Requires `acknowledged=1`, which the connect dialog sends after the warning is accepted. |
+| `{prefix}_exchange` | ChatGPT only. Finishes the sign-in from the pasted `code`, the redirect address. |
+| `{prefix}_poll` | Grok only. Checks once whether the sign-in code was approved and returns `pending` or `connected`. |
 | `{prefix}_cancel` | Abandons the pending sign-in. |
 | `{prefix}_disconnect` | Removes the stored tokens and asks the provider to revoke the sign-in. |
 

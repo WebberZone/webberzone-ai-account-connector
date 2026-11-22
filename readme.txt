@@ -29,7 +29,7 @@ ChatGPT needs a Plus or Pro plan and a compatible version of [AI Provider for Op
 
 1. Upload the plugin to `/wp-content/plugins/`, or install it from the Plugins screen, and activate it.
 2. Go to Settings → Connectors and choose **Sign in with ChatGPT** or **Sign in with xAI** on the matching card.
-3. Read the warning and tick the box. Approve access on the provider's page. Then paste back what it gives you: the one-time code xAI shows (Grok), or the address your browser is sent to (ChatGPT; it starts with http://127.0.0.1 and will not load). The card shows Connected once approved.
+3. Read the warning and tick the box. Approve access on the provider's page. For Grok, check that the code on xAI's page matches the one shown, and it connects on its own. For ChatGPT, paste back the address your browser is sent to (it starts with http://127.0.0.1 and will not load). The card shows Connected once approved.
 
 == Frequently Asked Questions ==
 
@@ -67,5 +67,5 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 = 1.0.0 =
 * Connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
 * ChatGPT uses OpenAI's Sign in with ChatGPT for open-source apps and the public Responses API, for text generation. Paste back the address your browser is sent to.
-* Grok uses xAI's consent screen, for text and image generation. Paste the code it shows.
+* Grok uses xAI's device-code sign-in, for text and image generation. Enter the code on xAI's page; nothing is pasted back.
 * A warning on every connect dialog that must be accepted before signing in.

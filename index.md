@@ -24,7 +24,7 @@ permalink: /
   <div class="feature-grid">
     <div class="feature-card">
       <h3>Sign in once</h3>
-      <p>Approve access on the provider's page, then paste back the one-time code (Grok) or the address your browser ends up on (ChatGPT). Every connect dialog starts with a warning you must accept. Tokens are stored encrypted and refreshed automatically.</p>
+      <p>Approve access on the provider's page, then, for ChatGPT, paste back the address your browser ends up on. Grok connects on its own once you enter its code. Every connect dialog starts with a warning you must accept. Tokens are stored encrypted and refreshed automatically.</p>
     </div>
     <div class="feature-card">
       <h3>Text generation</h3>
@@ -68,7 +68,7 @@ permalink: /
     </li>
     <li>
       <h3>Sign in</h3>
-      <p>Go to <strong>Settings → Connectors</strong>, click <strong>Sign in with ChatGPT</strong> or <strong>Sign in with xAI</strong> on the matching card, and follow the prompts. For ChatGPT, approve access, then paste the address your browser is sent to (it starts with <code>http://127.0.0.1</code> and will not load). If the AI plugin shows a connector approval notice, approve the account for the plugins that should use it.</p>
+      <p>Go to <strong>Settings → Connectors</strong>, click <strong>Sign in with ChatGPT</strong> or <strong>Sign in with xAI</strong> on the matching card, and follow the prompts. For Grok, check the code on xAI's page matches the dialog and approve; it connects on its own. For ChatGPT, approve access, then paste the address your browser is sent to (it starts with <code>http://127.0.0.1</code> and will not load). If the AI plugin shows a connector approval notice, approve the account for the plugins that should use it.</p>
     </li>
   </ol>
 </div>

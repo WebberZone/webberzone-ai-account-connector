@@ -71,13 +71,30 @@ abstract class OAuth_Client {
 	/**
 	 * Finishes a sign-in from what the user pasted back from the provider, and stores the tokens.
 	 *
+	 * Only providers that use a pasted code or address implement this.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param  string $input Pasted code or address.
-	 * @return string 'connected'.
 	 * @throws RuntimeException When the sign-in expired, was denied, or the provider returned an error.
 	 */
-	abstract public static function exchange_authorization_code( $input );
+	public static function exchange_authorization_code( $input ) {
+		unset( $input );
+		throw new RuntimeException( esc_html__( 'This sign-in does not use a pasted code.', 'webberzone-ai-account-connector' ) );
+	}
+
+	/**
+	 * Checks once whether the pending sign-in was approved, and stores the tokens if so.
+	 *
+	 * Only providers that use a device code implement this.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @throws RuntimeException When the sign-in expired, was declined, or the provider returned an error.
+	 */
+	public static function poll_sign_in() {
+		throw new RuntimeException( esc_html__( 'This sign-in does not use a device code.', 'webberzone-ai-account-connector' ) );
+	}
 
 	/**
 	 * Checks that the provider still honours the stored sign-in, at most every ten minutes.

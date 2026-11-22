@@ -16,7 +16,7 @@ Connect your ChatGPT and Grok accounts to the WordPress AI Client from **Setting
 
 1. Download the latest ZIP, upload it under Plugins → Add New → Upload Plugin, and activate it.
 2. Go to Settings → Connectors and choose **Sign in with ChatGPT** or **Sign in with xAI** on the matching card.
-3. Read the warning and tick the box. Approve access on the provider's page. Then paste back what it gives you: the one-time code xAI shows (Grok), or the address your browser is sent to (ChatGPT; it starts with `http://127.0.0.1` and will not load).
+3. Read the warning and tick the box. Approve access on the provider's page. For Grok, check that the code on xAI's page matches the one shown, and the dialog connects on its own. For ChatGPT, paste back the address your browser is sent to (it starts with `http://127.0.0.1` and will not load).
 
 ## Features
 

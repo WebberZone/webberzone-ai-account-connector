@@ -65,6 +65,8 @@ abstract class Connectors {
 					'acknowledge'   => __( 'I understand the risks and want to connect.', 'webberzone-ai-account-connector' ),
 					'continue'      => __( 'Continue', 'webberzone-ai-account-connector' ),
 					'opening'       => __( 'Opening the sign-in page…', 'webberzone-ai-account-connector' ),
+					'codeLabel'     => __( 'Your sign-in code', 'webberzone-ai-account-connector' ),
+					'waiting'       => __( 'Waiting for approval…', 'webberzone-ai-account-connector' ),
 					'popupBlocked'  => __( 'Your browser blocked the sign-in page. Use the link above.', 'webberzone-ai-account-connector' ),
 					'connect'       => __( 'Connect', 'webberzone-ai-account-connector' ),
 					'tryAgain'      => __( 'Try again', 'webberzone-ai-account-connector' ),

@@ -27,7 +27,7 @@ Requests go to OpenAI's public Responses API at `api.openai.com/v1` with your ac
 
 ### Grok
 
-xAI has no equivalent program for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools, which is why xAI's consent page is titled "Authorize Grok Build": authorization code with PKCE against `auth.x.ai`. xAI only allows a loopback redirect that a WordPress site cannot receive, so xAI's consent page either shows a one-time code or your browser lands on an error page whose address (starting with `http://127.0.0.1:56121`) contains the code. You paste the code or that address into WordPress, which exchanges it using the PKCE verifier kept on your server. The code is valid for 5 minutes. This is not an official xAI program, so use it entirely at your own risk.
+xAI has no equivalent program for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools, which is why xAI's consent page is titled "Authorize Grok Build": the device authorization grant (RFC 8628) against `auth.x.ai`. WordPress asks xAI for a short sign-in code and shows it to you. You enter it on xAI's sign-in page, and WordPress checks with xAI every few seconds until you approve, then stores the tokens. Nothing is pasted back, and the device code never leaves your server. The code is valid for 30 minutes. This is not an official xAI program, so use it entirely at your own risk.
 
 ### Both
 
