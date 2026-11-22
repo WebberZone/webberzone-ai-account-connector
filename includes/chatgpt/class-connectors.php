@@ -15,5 +15,5 @@ class Connectors extends \WebberZone\AI_Account_Connector\Connectors {
 	const TOKEN_STORE = Token_Store::class;
 	const CONFIG      = Config::class;
 	const ADMIN       = Admin::class;
-	const PREFIX      = 'wzap_chatgpt';
+	const PREFIX      = 'wzaiac_chatgpt';
 }

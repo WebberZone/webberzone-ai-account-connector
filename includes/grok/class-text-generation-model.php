@@ -93,7 +93,7 @@ class Text_Generation_Model extends AbstractOpenAiCompatibleTextGenerationModel 
 		 * @param float  $minimum  Minimum timeout. 0 for non-reasoning models, otherwise 180.
 		 * @param string $model_id Model ID, or an empty string when unknown.
 		 */
-		$minimum = (float) apply_filters( 'wzap_grok_min_timeout', $minimum, $model_id );
+		$minimum = (float) apply_filters( 'wzaiac_grok_min_timeout', $minimum, $model_id );
 
 		$timeout = $options->getTimeout();
 		if ( null === $timeout || self::default_timeout() === $timeout ) {

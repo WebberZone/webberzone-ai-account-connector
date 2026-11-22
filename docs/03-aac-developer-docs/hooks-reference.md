@@ -24,13 +24,13 @@ The provider ID also drives the connector slug and setting names in WordPress co
 
 ## Filter Hooks
 
-### `wzap_chatgpt_min_timeout( $minimum, $model_id )`
+### `wzaiac_chatgpt_min_timeout( $minimum, $model_id )`
 
 Filters the minimum request timeout for ChatGPT, in seconds.
 
 ```php
 add_filter(
-	'wzap_chatgpt_min_timeout',
+	'wzaiac_chatgpt_min_timeout',
 	function ( $minimum, $model_id ) {
 		return 60.0;
 	},
@@ -48,7 +48,7 @@ add_filter(
 
 Text models keep a caller's explicit timeout when it is above the minimum, so a plugin can fall back to another provider sooner. Requests with no timeout, or with the AI Client's default, get at least 180 seconds.
 
-### `wzap_grok_min_timeout( $minimum, $model_id )`
+### `wzaiac_grok_min_timeout( $minimum, $model_id )`
 
 Filters the minimum request timeout for Grok, in seconds.
 
@@ -59,13 +59,13 @@ Filters the minimum request timeout for Grok, in seconds.
 
 **Returns:** `float`: The minimum timeout.
 
-### `wzap_chatgpt_fallback_models( $models )`
+### `wzaiac_chatgpt_fallback_models( $models )`
 
 Filters the ChatGPT models offered when the live model list cannot be fetched.
 
 ```php
 add_filter(
-	'wzap_chatgpt_fallback_models',
+	'wzaiac_chatgpt_fallback_models',
 	function ( $models ) {
 		$models['gpt-example'] = 'GPT Example';
 		return $models;
@@ -79,7 +79,7 @@ add_filter(
 
 **Returns:** `array`: The models.
 
-### `wzap_grok_fallback_models( $models )`
+### `wzaiac_grok_fallback_models( $models )`
 
 Filters the Grok models offered when the live model list cannot be fetched.
 
@@ -89,13 +89,13 @@ Filters the Grok models offered when the live model list cannot be fetched.
 
 **Returns:** `array`: The models.
 
-### `wzap_enable_update_checks( $enabled )`
+### `wzaiac_enable_update_checks( $enabled )`
 
 Filters whether the plugin checks GitHub for updates from published releases.
 
 ```php
 add_filter(
-	'wzap_enable_update_checks',
+	'wzaiac_enable_update_checks',
 	'__return_false'
 );
 ```
@@ -116,19 +116,19 @@ For each connected provider the plugin returns `true` from `wpai_has_ai_credenti
 
 | Item | ChatGPT | Grok |
 |---|---|---|
-| Encrypted tokens (option, autoload off) | `wzap_chatgpt_tokens` | `wzap_grok_tokens` |
-| Model list cache (transient) | `wzap_chatgpt_models` | `wzap_grok_models` |
-| Model list failure marker (transient) | `wzap_chatgpt_models_failed` | `wzap_grok_models_failed` |
-| Refresh lock (option) | `wzap_chatgpt_refresh_lock` | `wzap_grok_refresh_lock` |
-| Site host ID sent to OpenAI (option) | `wzap_chatgpt_host_id` | n/a |
-| Issued OpenAI client ID, kept across disconnects (option) | `wzap_chatgpt_client` | n/a |
-| Pending sign-in (transient prefix) | `wzap_chatgpt_flow_` | `wzap_grok_flow_` |
+| Encrypted tokens (option, autoload off) | `wzaiac_chatgpt_tokens` | `wzaiac_grok_tokens` |
+| Model list cache (transient) | `wzaiac_chatgpt_models` | `wzaiac_grok_models` |
+| Model list failure marker (transient) | `wzaiac_chatgpt_models_failed` | `wzaiac_grok_models_failed` |
+| Refresh lock (option) | `wzaiac_chatgpt_refresh_lock` | `wzaiac_grok_refresh_lock` |
+| Site host ID sent to OpenAI (option) | `wzaiac_chatgpt_host_id` | n/a |
+| Issued OpenAI client ID, kept across disconnects (option) | `wzaiac_chatgpt_client` | n/a |
+| Pending sign-in (transient prefix) | `wzaiac_chatgpt_flow_` | `wzaiac_grok_flow_` |
 
 Tokens are encrypted with libsodium. The key is derived from `AUTH_KEY` and `AUTH_SALT` plus a per-provider context.
 
 ## AJAX Actions
 
-Each provider registers five `wp_ajax_` actions, where the prefix is `wzap_chatgpt` or `wzap_grok`.
+Each provider registers five `wp_ajax_` actions, where the prefix is `wzaiac_chatgpt` or `wzaiac_grok`.
 
 | Action | Purpose |
 |---|---|

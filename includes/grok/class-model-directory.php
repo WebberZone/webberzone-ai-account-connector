@@ -131,7 +131,7 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 		 *
 		 * @param array<string, string> $models Model ID => 'text' or 'image'.
 		 */
-		return (array) apply_filters( 'wzap_grok_fallback_models', self::FALLBACK_MODELS );
+		return (array) apply_filters( 'wzaiac_grok_fallback_models', self::FALLBACK_MODELS );
 	}
 
 	/**

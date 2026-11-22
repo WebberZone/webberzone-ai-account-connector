@@ -101,14 +101,14 @@ class OAuth extends OAuth_Client {
 	 *
 	 * @var string
 	 */
-	const HOST_OPTION = 'wzap_chatgpt_host_id';
+	const HOST_OPTION = 'wzaiac_chatgpt_host_id';
 
 	/**
 	 * Option holding the issued client ID, kept across disconnects so a reconnect reuses it.
 	 *
 	 * @var string
 	 */
-	const CLIENT_OPTION = 'wzap_chatgpt_client';
+	const CLIENT_OPTION = 'wzaiac_chatgpt_client';
 
 	/**
 	 * Refresh access tokens this many seconds before they expire.

@@ -61,7 +61,7 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 
 * ChatGPT uses OpenAI's sign-in service at auth.openai.com and the OpenAI API at api.openai.com. See the [Sign in with ChatGPT terms](https://openai.com/policies/sign-in-with-chatgpt-terms/), the [OpenAI Terms of Use](https://openai.com/policies/terms-of-use/) and [Privacy Policy](https://openai.com/policies/privacy-policy/).
 * Grok uses xAI's sign-in service at auth.x.ai and the Grok API at api.x.ai. See the [xAI Terms of Service](https://x.ai/legal/terms-of-service) and [Privacy Policy](https://x.ai/legal/privacy-policy).
-* The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzap_enable_update_checks` filter to turn this off.
+* The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzaiac_enable_update_checks` filter to turn this off.
 
 == Changelog ==
 

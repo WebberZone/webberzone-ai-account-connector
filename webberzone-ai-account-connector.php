@@ -36,7 +36,7 @@ spl_autoload_register(
 	}
 );
 
-if ( apply_filters( 'wzap_enable_update_checks', true ) && is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
+if ( apply_filters( 'wzaiac_enable_update_checks', true ) && is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 	$update_checker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
 		'https://github.com/WebberZone/webberzone-ai-account-connector',

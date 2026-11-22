@@ -11,9 +11,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** ChatGPT admin. */
 class Admin extends \WebberZone\AI_Account_Connector\Admin {
-	const PREFIX        = 'wzap_chatgpt';
+	const PREFIX        = 'wzaiac_chatgpt';
 	const OAUTH         = OAuth::class;
 	const CONFIG        = Config::class;
-	const NONCE         = 'wzap_chatgpt_admin';
-	const REVOKE_FAILED = 'wzap_chatgpt_revoke_failed_';
+	const NONCE         = 'wzaiac_chatgpt_admin';
+	const REVOKE_FAILED = 'wzaiac_chatgpt_revoke_failed_';
 }

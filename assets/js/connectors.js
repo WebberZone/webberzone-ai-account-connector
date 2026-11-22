@@ -67,7 +67,7 @@ function registerAccount( config ) {
 	}
 
 	function openConsentWindow() {
-		return window.open( 'about:blank', 'wzap-signin-' + config.prefix );
+		return window.open( 'about:blank', 'wzaiac-signin-' + config.prefix );
 	}
 
 	function SignInModal( { onClose, onConnected } ) {

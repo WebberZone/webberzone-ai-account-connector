@@ -40,7 +40,7 @@ The plugin contacts the provider when you use its connector: sign-in (registrati
 
 - ChatGPT: auth.openai.com and api.openai.com. [Sign in with ChatGPT terms](https://openai.com/policies/sign-in-with-chatgpt-terms/), [Terms of Use](https://openai.com/policies/terms-of-use/), [Privacy](https://openai.com/policies/privacy-policy/)
 - Grok: auth.x.ai and api.x.ai. [Terms](https://x.ai/legal/terms-of-service), [Privacy](https://x.ai/legal/privacy-policy)
-- GitHub: api.github.com checks for plugin updates from GitHub releases. The plugin does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzap_enable_update_checks` filter to disable update checks.
+- GitHub: api.github.com checks for plugin updates from GitHub releases. The plugin does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzaiac_enable_update_checks` filter to disable update checks.
 
 ## Development
 

@@ -64,6 +64,6 @@ For Grok, revocation ends the refresh token only. xAI may accept the access toke
 | Grok | auth.x.ai, api.x.ai | [Terms of Service](https://x.ai/legal/terms-of-service), [Privacy Policy](https://x.ai/legal/privacy-policy) |
 | GitHub | api.github.com | [GitHub Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service), [Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement) |
 
-The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzap_enable_update_checks` filter to turn this off.
+The plugin contacts api.github.com to check for plugin updates from GitHub releases. It does not send site content or credentials; WordPress may include your site URL in the HTTP User-Agent. Return false from the `wzaiac_enable_update_checks` filter to turn this off.
 
 Generation requests can include prompts, images, and generation settings from the WordPress feature making the request.
