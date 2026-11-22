@@ -11,7 +11,7 @@ toc: true
 
 [toc]
 
-WebberZone AI Account Connector lets you sign in with your existing ChatGPT and Grok accounts from **Settings → Connectors**, so the WordPress AI Client can use them for text and image generation. No API key is needed.
+WebberZone AI Account Connector lets you sign in with your existing ChatGPT and Grok accounts from **Settings → Connectors**, so the WordPress AI Client can use them for text generation (ChatGPT) and text and image generation (Grok). No API key is needed.
 
 > **Not affiliated.** This is an independent plugin. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI. Grok is a trademark of xAI. The names are used only to describe which accounts the plugin works with.
 
@@ -20,7 +20,7 @@ WebberZone AI Account Connector lets you sign in with your existing ChatGPT and 
 ## Requirements
 
 - WordPress 7.0 or later and PHP 7.4 or later
-- **ChatGPT:** a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/), and device code login enabled in your ChatGPT account
+- **ChatGPT:** a ChatGPT Plus or Pro plan and a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/)
 - **Grok:** an xAI account with SuperGrok or X Premium
 
 Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because the connector builds on its request and response handling.
@@ -35,21 +35,29 @@ Grok works on its own; ChatGPT needs the AI Provider for OpenAI plugin because t
 
 ---
 
+## Before You Connect
+
+Every connect dialog opens with a warning that you must accept before anything starts. It says that this plugin is independent and not an official OpenAI or xAI integration, that connecting this way may break the provider's terms and the provider may restrict or suspend your account, and that other code running on your site, such as plugins and themes, can still use the token while it is connected. Connect only if you are the administrator who will use it, on a site you control.
+
 ## Connect ChatGPT
 
-1. In ChatGPT, open **Settings → Security** and enable device code login for Codex.
-2. In WordPress, go to **Settings → Connectors** and choose **Sign in with ChatGPT** on the ChatGPT Account card.
-3. Open the ChatGPT device sign-in page shown in the dialog, sign in, and enter the code displayed.
-4. Approve the request. The dialog waits for you (the code is valid for up to 15 minutes) and the card then shows **Connected** with the account email and plan.
+1. Go to **Settings → Connectors** and choose **Sign in with ChatGPT** on the ChatGPT Account card.
+2. Read the warning and tick the box to continue.
+3. Approve access on the ChatGPT sign-in page that opens, and sign in if asked.
+4. Your browser is then sent to an address starting with `http://127.0.0.1` that cannot load. That is expected: the address contains the authorization code for your site.
+5. Copy the full address from the browser's address bar, paste it into the dialog, and choose **Connect**. The card shows **Connected** with the account email.
+
+The sign-in is valid for up to 15 minutes. The ChatGPT connector supports text generation only.
 
 ## Connect Grok
 
 1. Make sure your xAI account has SuperGrok or X Premium.
 2. Go to **Settings → Connectors** and choose **Sign in with xAI** on the Grok Account card.
-3. Approve access on the xAI page that opens. Sign in with your X or xAI account if asked.
-4. That page cannot send you back to WordPress, so it shows a one-time code (it may say to copy it into Grok Build). Paste the code into the dialog and choose **Connect**.
+3. Read the warning and tick the box to continue.
+4. Approve access on the xAI sign-in page that opens, and sign in with your X or xAI account if asked.
+5. xAI cannot return to WordPress, so its page shows a one-time code. Paste it into the dialog and choose **Connect**. The code is valid for 5 minutes.
 
-The code is valid for 5 minutes. Some plans can sign in but are refused by the xAI API. If that happens, the error appears when you generate content.
+Some plans can sign in but are refused by the xAI API. If that happens, the error appears when you generate content.
 
 ---
 

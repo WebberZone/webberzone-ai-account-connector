@@ -53,14 +53,51 @@ class Config {
 	}
 
 	/**
-	 * Which sign-in UI the Connectors card should show.
+	 * Warning shown on the connect dialog; the administrator must accept it before signing in.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
-	 * @return string 'device' or 'browser'.
+	 * @return string[] Paragraphs.
 	 */
-	public static function sign_in_flow() {
-		return 'device';
+	public static function warning() {
+		return array(
+			__( 'This plugin is independent and is not affiliated with, endorsed by or sponsored by OpenAI. It uses OpenAI\'s Sign in with ChatGPT programme for open-source apps, which is a preview.', 'webberzone-ai-account-connector' ),
+			__( 'OpenAI\'s terms may not cover every kind of hosted site. Using your ChatGPT plan this way may break them, and OpenAI may restrict or suspend your account. Use it only for your own requests, never for other people\'s.', 'webberzone-ai-account-connector' ),
+			__( 'Connect only if you are the administrator who will use it, on a site you control. The token is stored on this site, and other code running here, such as plugins and themes, can still use it while it is connected.', 'webberzone-ai-account-connector' ),
+		);
+	}
+
+	/**
+	 * First sign-in step. Text inside <a></a> is linked to the consent screen.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function browser_step() {
+		return __( '1. Approve access on <a>the ChatGPT sign-in page</a>. Sign in with your ChatGPT account if asked.', 'webberzone-ai-account-connector' );
+	}
+
+	/**
+	 * Explains why an address has to be pasted back.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function browser_paste() {
+		return __( '2. Your browser will then be sent to an address starting with http://127.0.0.1 that cannot load. That is expected. Copy the full address from the address bar and paste it below. It is valid for 15 minutes.', 'webberzone-ai-account-connector' );
+	}
+
+	/**
+	 * Label for the field the redirect address is pasted into.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function paste_label() {
+		return __( 'Address from your browser', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -72,20 +109,9 @@ class Config {
 	 */
 	public static function note() {
 		return array(
-			'text' => __( 'Before signing in, enable device code login for Codex in <a>ChatGPT → Settings → Security</a>.', 'webberzone-ai-account-connector' ),
-			'url'  => OAuth::SECURITY_SETTINGS_URL,
+			'text' => __( 'Works with ChatGPT Plus and Pro plans. Usage counts against your plan.', 'webberzone-ai-account-connector' ),
+			'url'  => '',
 		);
-	}
-
-	/**
-	 * First sign-in step. Text inside <a></a> is linked to the device sign-in page.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string
-	 */
-	public static function device_step() {
-		return __( '1. Open <a>the ChatGPT device sign-in page</a> and sign in.', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -98,14 +124,10 @@ class Config {
 	 */
 	public static function account_summary( array $tokens ) {
 		$email = (string) ( $tokens['email'] ?? '' );
-		$plan  = (string) ( $tokens['plan'] ?? '' );
 		if ( '' === $email ) {
 			return '';
 		}
-		return '' !== $plan
-		/* translators: 1: account email, 2: plan name. */
-		? sprintf( __( 'Signed in as %1$s (%2$s plan).', 'webberzone-ai-account-connector' ), $email, $plan )
 		/* translators: %s: account email. */
-		: sprintf( __( 'Signed in as %s.', 'webberzone-ai-account-connector' ), $email );
+		return sprintf( __( 'Signed in as %s.', 'webberzone-ai-account-connector' ), $email );
 	}
 }

@@ -31,15 +31,7 @@ Filters the minimum request timeout in seconds.
 apply_filters( 'wzap_chatgpt_min_timeout', float $minimum, string $model_id );
 ```
 
-The default is `0` for ChatGPT text models and for Grok non-reasoning models, otherwise `180`. Text models keep a caller's explicit timeout when it is above the minimum, so a plugin can fall back to another provider sooner. Requests without a timeout, or with the AI Client's default, get at least 180 seconds.
-
-### `wzap_chatgpt_codex_client_version`
-
-Filters the Codex CLI version string reported to the ChatGPT backend.
-
-```php
-apply_filters( 'wzap_chatgpt_codex_client_version', string $version );
-```
+The default is `0` for known ChatGPT models and for Grok non-reasoning models, otherwise `180`. Text models keep a caller's explicit timeout when it is above the minimum, so a plugin can fall back to another provider sooner. Requests without a timeout, or with the AI Client's default, get at least 180 seconds.
 
 ### `wzap_chatgpt_fallback_models`
 ### `wzap_grok_fallback_models`
@@ -53,7 +45,7 @@ apply_filters( 'wzap_grok_fallback_models', array $models );    // [ 'model-id' 
 
 ## Filters the Plugin Hooks Into
 
-For each connected provider the plugin returns `true` from `wpai_has_ai_credentials` and `wpai_has_image_generation_support`, so the WordPress AI plugin knows credentials are available.
+For each connected provider the plugin returns `true` from `wpai_has_ai_credentials`, and for Grok also from `wpai_has_image_generation_support` (ChatGPT does not support image generation), so the WordPress AI plugin knows what is available.
 
 ## Storage
 
@@ -63,13 +55,15 @@ For each connected provider the plugin returns `true` from `wpai_has_ai_credenti
 | Model list cache (transient) | `wzap_chatgpt_models` | `wzap_grok_models` |
 | Model list failure marker (transient) | `wzap_chatgpt_models_failed` | `wzap_grok_models_failed` |
 | Refresh lock (option) | `wzap_chatgpt_refresh_lock` | `wzap_grok_refresh_lock` |
+| Site host ID sent to OpenAI (option) | `wzap_chatgpt_host_id` | n/a |
+| Issued OpenAI client ID, kept across disconnects (option) | `wzap_chatgpt_client` | n/a |
 | Pending sign-in (transient prefix) | `wzap_chatgpt_flow_` | `wzap_grok_flow_` |
 
 Tokens are encrypted with libsodium. The key is derived from `AUTH_KEY` and `AUTH_SALT` plus a per-provider context.
 
 ## AJAX Actions
 
-Each provider registers `wp_ajax_{prefix}_start`, `_poll`, `_exchange`, `_cancel` and `_disconnect`, where the prefix is `wzap_chatgpt` or `wzap_grok`. Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability. `_exchange` is only used by Grok: it posts the pasted authorization code. ChatGPT ignores it.
+Each provider registers `wp_ajax_{prefix}_start`, `_exchange`, `_cancel` and `_disconnect`. `_start` requires `acknowledged=1`, set by the connect dialog after the warning is accepted. `_exchange` takes the pasted `code`: the one-time code for Grok, the redirect address for ChatGPT, where the prefix is `wzap_chatgpt` or `wzap_grok`. Every action checks a nonce (`{prefix}_admin`) and the `manage_options` capability.
 
 ## Layout
 

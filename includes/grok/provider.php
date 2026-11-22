@@ -102,3 +102,15 @@ function attach_authentication() {
 function report_connected( $has_support ) {
 	return $has_support || ( is_ready() && Token_Store::is_connected() );
 }
+
+/**
+ * Tells the AI plugin that image generation is available when a Grok account is connected.
+ *
+ * @since 1.0.0
+ *
+ * @param  bool $has_support Whether image support is already available.
+ * @return bool
+ */
+function report_image_support( $has_support ) {
+	return report_connected( $has_support );
+}

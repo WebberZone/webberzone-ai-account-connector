@@ -4,7 +4,7 @@ Tags: ai, connectors, chatgpt, grok
 Requires at least: 7.0
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,16 +12,16 @@ Connect your ChatGPT and Grok accounts to the WordPress AI Client from Settings 
 
 == Description ==
 
-Link ChatGPT, Grok, or both from the WordPress Connectors screen, then use those accounts for text and image generation through the WordPress AI Client. No API key is needed; you sign in with your existing account.
+Link ChatGPT, Grok, or both from the WordPress Connectors screen, then use those accounts for text generation (ChatGPT) and text and image generation (Grok) through the WordPress AI Client. No API key is needed; you sign in with your existing account.
 
-* Sign in from Settings → Connectors. ChatGPT uses a device code. Grok opens the xAI consent screen; paste the code that page shows. Each provider has its own card and connection.
+* Sign in from Settings → Connectors. Each provider has its own card and connection, and the connect dialog opens with a warning you must accept.
 * Tokens are stored encrypted and refreshed automatically.
 * Disconnect at any time. The plugin attempts to revoke the sign-in with the provider.
 * On multisite, each site keeps its own connection.
 
-**Read this first.** A provider may change or block this at any time. Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in, so use the plugin on sites you control.
+**Read this first.** A provider may change or block this at any time. Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in, so use the plugin on sites you control. Do not use one person's subscription for other people's requests; OpenAI's terms forbid it.
 
-ChatGPT also requires a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). Grok works independently.
+ChatGPT needs a Plus or Pro plan and a compatible version of [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/). Grok works independently.
 
 **Not affiliated.** This plugin is an independent project by WebberZone. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI. Grok is a trademark of xAI. The names are used only to describe which accounts the plugin works with.
 
@@ -29,7 +29,7 @@ ChatGPT also requires a compatible version of [AI Provider for OpenAI](https://w
 
 1. Upload the plugin to `/wp-content/plugins/`, or install it from the Plugins screen, and activate it.
 2. Go to Settings → Connectors and choose **Sign in with ChatGPT** or **Sign in with xAI** on the matching card.
-3. ChatGPT: open the sign-in page, enter the code, and approve. Grok: approve access on the xAI page that opens, then paste the code that page shows. The card shows Connected once that finishes.
+3. Read the warning and tick the box. Approve access on the provider's page. Then paste back what it gives you: the one-time code xAI shows (Grok), or the address your browser is sent to (ChatGPT; it starts with http://127.0.0.1 and will not load). The card shows Connected once approved.
 
 == Frequently Asked Questions ==
 
@@ -39,7 +39,7 @@ No. The plugin uses your ChatGPT or Grok account sign-in instead. Usage counts a
 
 = What does my account need before I sign in? =
 
-For ChatGPT, device code login must be enabled under ChatGPT Settings → Security. For Grok, use an xAI account with SuperGrok or X Premium; some plans can sign in but are refused by the API.
+For ChatGPT, a Plus or Pro plan. For Grok, use an xAI account with SuperGrok or X Premium; some plans can sign in but are refused by the API.
 
 = Where are my credentials stored? =
 
@@ -55,17 +55,17 @@ No. It is not affiliated with, endorsed by, or sponsored by OpenAI or xAI.
 
 == External services ==
 
-The plugin contacts the corresponding service when you use its connector. Starting a ChatGPT sign-in sends OpenAI's OAuth client identifier and requests a device code; polling exchanges the approved code for tokens. Starting a Grok sign-in sends the browser to xAI's consent screen (OAuth client identifier, PKCE challenge, and the loopback redirect `http://127.0.0.1:56121/callback`). Finishing it sends the code you paste, with the matching PKCE verifier, to xAI's token endpoint. Whenever the AI Client uses a connected account, the plugin may refresh the saved tokens and fetch the list of available models in the background (the ChatGPT Codex backend `/models` endpoint and the xAI `/models` endpoint). Uninstalling the plugin attempts remote revocation for every connected account on every site. The plugin encrypts saved tokens using WordPress authentication salts and uses them to authenticate requests and refresh the connection. Generation requests can include prompts, images, and generation settings from the WordPress feature making the request. Disconnecting attempts remote revocation where supported.
+The plugin contacts the corresponding service when you use its connector. ChatGPT sign-in sends OpenAI a registration request (the app name WebberZone AI Account Connector and a random per-site host ID) and, once you paste the address your browser was sent to, exchanges the authorization code for tokens. Grok sign-in opens xAI's consent screen and exchanges the code you paste back for tokens. Whenever the AI Client uses a connected account, the plugin may refresh the saved tokens and fetch the list of available models in the background (the OpenAI `/v1/models` endpoint and the xAI `/models` endpoint). Uninstalling the plugin attempts remote revocation for every connected account on every site. The plugin encrypts saved tokens using WordPress authentication salts and uses them to authenticate requests and refresh the connection. Generation requests can include prompts, images, and generation settings from the WordPress feature making the request. Disconnecting attempts remote revocation where supported.
 
-How sign-in works: WebberZone has no application registered with OpenAI or xAI, and this plugin is not an official integration. ChatGPT reuses the device-code sign-in of the Codex command-line tool, and requests identify themselves as that client. Grok reuses the public Grok CLI authorization-code flow, which is also what Warp uses to connect a SuperGrok or X Premium subscription. xAI only allows that client to redirect to a loopback address, which a WordPress site cannot receive, so the consent screen shows a code for you to paste. This is what lets the plugin use your existing account without an API key. Sign-in and requests go directly between your site and the provider; WebberZone does not receive your tokens or prompts. Use of the plugin is subject to each provider's terms, so check that it complies with yours.
+How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-source apps. Your site registers itself with OpenAI during your first sign-in, you approve access on OpenAI's page, and requests go through OpenAI's public Responses API. The programme is a preview and OpenAI's terms may not cover every kind of hosted site, so check the [Sign in with ChatGPT terms](https://openai.com/policies/sign-in-with-chatgpt-terms/). xAI has no equivalent programme for third-party apps, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools and signs in through xAI's consent screen, with a pasted code. WebberZone has no application of its own registered with either provider (with ChatGPT, each site registers itself with OpenAI as WebberZone AI Account Connector), and this plugin is not an official integration. Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts. A provider may change or block this at any time, so check that your use complies with its terms.
 
-* ChatGPT uses OpenAI's sign-in service at auth.openai.com and the ChatGPT Codex backend at chatgpt.com. See the [OpenAI Terms of Use](https://openai.com/policies/terms-of-use/) and [Privacy Policy](https://openai.com/policies/privacy-policy/).
+* ChatGPT uses OpenAI's sign-in service at auth.openai.com and the OpenAI API at api.openai.com. See the [Sign in with ChatGPT terms](https://openai.com/policies/sign-in-with-chatgpt-terms/), the [OpenAI Terms of Use](https://openai.com/policies/terms-of-use/) and [Privacy Policy](https://openai.com/policies/privacy-policy/).
 * Grok uses xAI's sign-in service at auth.x.ai and the Grok API at api.x.ai. See the [xAI Terms of Service](https://x.ai/legal/terms-of-service) and [Privacy Policy](https://x.ai/legal/privacy-policy).
 
 == Changelog ==
 
-= 1.0.1 =
-* Grok sign-in now opens the xAI consent screen, the same kind of account login Warp uses. Paste the code that page shows to finish connecting. ChatGPT still uses a device code.
-
 = 1.0.0 =
-* Initial release: connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
+* Connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
+* ChatGPT uses OpenAI's Sign in with ChatGPT for open-source apps and the public Responses API, for text generation. Paste back the address your browser is sent to.
+* Grok uses xAI's consent screen, for text and image generation. Paste the code it shows.
+* A warning on every connect dialog that must be accepted before signing in.

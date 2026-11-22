@@ -8,12 +8,8 @@
 namespace WebberZone\AI_Account_Connector\ChatGPT;
 
 use WordPress\AiClient\Common\Exception\InvalidArgumentException;
-use WordPress\AiClient\Files\Enums\FileTypeEnum;
-use WordPress\AiClient\Files\Enums\MediaOrientationEnum;
 use WordPress\AiClient\Messages\Enums\ModalityEnum;
 use WordPress\AiClient\Providers\Contracts\ModelMetadataDirectoryInterface;
-use WordPress\AiClient\Providers\Http\DTO\Request;
-use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
 use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
 use WordPress\AiClient\Providers\Models\DTO\SupportedOption;
 use WordPress\AiClient\Providers\Models\Enums\CapabilityEnum;
@@ -27,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Lists the models available to the connected ChatGPT account.
  *
- * Text models come from the backend's /models endpoint (cached), with a fallback list; the image model is fixed.
+ * Models come from the API's /models endpoint (cached), with a fallback list.
  *
  * @since 1.0.0
  */
@@ -47,13 +43,6 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 	 * @var string
 	 */
 	const FAILED_KEY = Token_Store::MODELS_FAILED_KEY;
-
-	/**
-	 * Image model used by Codex with a ChatGPT sign-in.
-	 *
-	 * @var string
-	 */
-	const IMAGE_MODEL = 'gpt-image-2';
 
 	/**
 	 * Text models used when the live list is unavailable.
@@ -82,7 +71,6 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 			foreach ( $this->text_models() as $id => $name ) {
 				$this->models[ $id ] = self::text_metadata( $id, $name );
 			}
-			$this->models[ self::IMAGE_MODEL ] = self::image_metadata();
 		}
 		return array_values( $this->models );
 	}
@@ -162,19 +150,11 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 		} catch ( \Exception $e ) {
 			return array();
 		}
-		$request = Account_Authentication::apply_headers(
-			new Request( HttpMethodEnum::GET(), Provider::url( 'models' ) . '?client_version=' . rawurlencode( Account_Authentication::client_version() ) ),
-			$tokens
-		);
-		$headers = array();
-		foreach ( $request->getHeaders() as $name => $values ) {
-			$headers[ $name ] = implode( ', ', (array) $values );
-		}
 		$response = wp_remote_get(
-			$request->getUri(),
+			Provider::url( 'models' ),
 			array(
 				'timeout' => 15,
-				'headers' => $headers,
+				'headers' => array( 'Authorization' => 'Bearer ' . $tokens['access_token'] ),
 			)
 		);
 		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
@@ -240,33 +220,5 @@ class Model_Directory implements ModelMetadataDirectoryInterface {
 			new SupportedOption( OptionEnum::outputModalities(), array( array( ModalityEnum::text() ) ) ),
 		);
 		return new ModelMetadata( $id, $name, array( CapabilityEnum::textGeneration(), CapabilityEnum::chatHistory() ), $options );
-	}
-
-	/**
-	 * Builds metadata for the image model.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return ModelMetadata
-	 */
-	private static function image_metadata() {
-		$options = array(
-			new SupportedOption( OptionEnum::inputModalities(), array( array( ModalityEnum::text() ) ) ),
-			new SupportedOption( OptionEnum::outputModalities(), array( array( ModalityEnum::image() ) ) ),
-			new SupportedOption( OptionEnum::candidateCount() ),
-			new SupportedOption( OptionEnum::outputMimeType(), array( 'image/png' ) ),
-			new SupportedOption( OptionEnum::outputFileType(), array( FileTypeEnum::inline() ) ),
-			new SupportedOption(
-				OptionEnum::outputMediaOrientation(),
-				array(
-					MediaOrientationEnum::square(),
-					MediaOrientationEnum::landscape(),
-					MediaOrientationEnum::portrait(),
-				)
-			),
-			new SupportedOption( OptionEnum::outputMediaAspectRatio(), array( '1:1', '3:2', '2:3' ) ),
-			new SupportedOption( OptionEnum::customOptions() ),
-		);
-		return new ModelMetadata( self::IMAGE_MODEL, 'GPT Image 2', array( CapabilityEnum::imageGeneration() ), $options );
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WebberZone AI Account Connector
  * Description: Connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
- * Version: 1.0.1
+ * Version: 1.0.0
  * Author: WebberZone
  * Author URI: https://webberzone.com
  * Requires at least: 7.0
@@ -17,7 +17,7 @@ namespace WebberZone\AI_Account_Connector;
 
 defined( 'ABSPATH' ) || exit;
 
-const VERSION = '1.0.1';
+const VERSION = '1.0.0';
 const MODULE  = 'webberzone-ai-account-connector';
 
 spl_autoload_register(
@@ -60,7 +60,9 @@ function start() {
 		add_action( 'init', $provider . '\\register_provider', 6 );
 		add_action( 'init', $provider . '\\attach_authentication', 30 );
 		add_filter( 'wpai_has_ai_credentials', $provider . '\\report_connected' );
-		add_filter( 'wpai_has_image_generation_support', $provider . '\\report_connected' );
+		if ( function_exists( $provider . '\\report_image_support' ) ) {
+			add_filter( 'wpai_has_image_generation_support', $provider . '\\report_image_support' );
+		}
 		if ( is_admin() ) {
 			( $provider . '\\Admin' )::init();
 			$connectors[] = $provider . '\\Connectors';

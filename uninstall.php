@@ -34,6 +34,8 @@ require_once __DIR__ . '/webberzone-ai-account-connector.php';
 				}
 				$store::clear();
 			}
+			delete_option( \WebberZone\AI_Account_Connector\ChatGPT\OAuth::HOST_OPTION );
+			delete_option( \WebberZone\AI_Account_Connector\ChatGPT\OAuth::CLIENT_OPTION );
 		} finally {
 			if ( $switched ) {
 				restore_current_blog();

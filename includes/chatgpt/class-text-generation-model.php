@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Generates text through the ChatGPT Codex backend's streaming Responses endpoint.
+ * Generates text through the OpenAI Responses API with a ChatGPT plan sign-in, which requires streaming.
  *
  * @since 1.0.0
  */
@@ -37,7 +37,7 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	const MIN_TIMEOUT = 180.0;
 
 	/**
-	 * Instructions sent when the prompt has no system instruction; the backend requires one.
+	 * Instructions sent when the prompt has no system instruction.
 	 *
 	 * @var string
 	 */
@@ -61,7 +61,7 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	}
 
 	/**
-	 * Adjusts OpenAI Platform parameters for the Codex backend.
+	 * Adjusts OpenAI Platform parameters to the ones a ChatGPT plan sign-in accepts.
 	 *
 	 * @since 1.0.0
 	 *
@@ -69,7 +69,9 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	 * @return array
 	 */
 	private function adapt_params( array $params ) {
-		unset( $params['temperature'], $params['top_p'], $params['top_logprobs'], $params['max_output_tokens'] );
+		foreach ( array( 'background', 'conversation', 'max_output_tokens', 'max_tool_calls', 'metadata', 'moderation', 'multi_agent', 'previous_response_id', 'prompt', 'prompt_cache_retention', 'safety_identifier', 'temperature', 'top_logprobs', 'top_p', 'truncation', 'user' ) as $unsupported ) {
+			unset( $params[ $unsupported ] );
+		}
 
 		$include   = array_diff( (array) ( $params['include'] ?? array() ), array( 'message.output_text.logprobs' ) );
 		$include[] = 'reasoning.encrypted_content';
@@ -133,7 +135,7 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	/**
 	 * Returns request options with at least the minimum timeout.
 	 *
-	 * A caller's timeout is kept for text models so it can fall back to another provider; image requests keep the full timeout.
+	 * A caller's timeout is kept for known text models so it can fall back to another provider.
 	 *
 	 * @since 1.0.0
 	 *
@@ -143,14 +145,14 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 	 */
 	public static function request_options( $options, string $model_id = '' ) {
 		$options = $options ? clone $options : new RequestOptions();
-		$minimum = '' === $model_id || Model_Directory::IMAGE_MODEL === $model_id ? self::MIN_TIMEOUT : 0.0;
+		$minimum = '' === $model_id ? self::MIN_TIMEOUT : 0.0;
 
 		/**
 		 * Filters the minimum request timeout in seconds.
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param float  $minimum  Minimum timeout. 0 for text models, otherwise 180.
+		 * @param float  $minimum  Minimum timeout. 0 for known models, otherwise 180.
 		 * @param string $model_id Model ID, or an empty string when unknown.
 		 */
 		$minimum = (float) apply_filters( 'wzap_chatgpt_min_timeout', $minimum, $model_id );
@@ -209,15 +211,19 @@ class Text_Generation_Model extends AbstractApiBasedModel implements TextGenerat
 				$final = $payload['response'];
 			} elseif ( in_array( $type, array( 'response.failed', 'error' ), true ) ) {
 				$error = $payload['response']['error'] ?? ( $payload['error'] ?? $payload );
-				/* translators: %s: error message. */
-				throw new RuntimeException( esc_html( sprintf( __( 'ChatGPT error: %s', 'webberzone-ai-account-connector' ), is_array( $error ) ? ( $error['message'] ?? wp_json_encode( $error ) ) : (string) $error ) ) );
+				$code  = is_array( $error ) ? (string) ( $error['code'] ?? '' ) : '';
+				if ( 'subscription_sharing_usage_limit_exceeded' === $code ) {
+					throw new RuntimeException( esc_html__( 'Your ChatGPT plan usage limit has been reached. Wait for it to reset, or check your usage in ChatGPT settings.', 'webberzone-ai-account-connector' ) );
+				}
+				/* translators: 1: error code, 2: error message. */
+				throw new RuntimeException( esc_html( sprintf( __( 'ChatGPT error (%1$s): %2$s', 'webberzone-ai-account-connector' ), '' !== $code ? $code : 'unknown', is_array( $error ) ? ( $error['message'] ?? wp_json_encode( $error ) ) : (string) $error ) ) );
 			}
 		}
 
 		if ( null === $final ) {
 			throw new RuntimeException( esc_html__( 'ChatGPT stream ended without a completed response.', 'webberzone-ai-account-connector' ) );
 		}
-		// The backend streams output items individually and may leave response.completed's output empty.
+		// Output items stream individually and response.completed's output may be empty.
 		if ( empty( $final['output'] ) && $items ) {
 			$final['output'] = $items;
 		}

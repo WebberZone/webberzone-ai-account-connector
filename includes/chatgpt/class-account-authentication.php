@@ -26,13 +26,6 @@ class Account_Authentication extends ApiKeyRequestAuthentication {
 
 
 	/**
-	 * Codex CLI version reported to the backend, which gates the model list.
-	 *
-	 * @var string
-	 */
-	const CODEX_CLIENT_VERSION = '0.162.1';
-
-	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
@@ -54,7 +47,7 @@ class Account_Authentication extends ApiKeyRequestAuthentication {
 	}
 
 	/**
-	 * Adds the authentication and Codex client headers to a request.
+	 * Adds the bearer token to a request.
 	 *
 	 * @since 1.0.0
 	 *
@@ -63,29 +56,6 @@ class Account_Authentication extends ApiKeyRequestAuthentication {
 	 * @return Request
 	 */
 	public static function apply_headers( Request $request, array $tokens ) {
-		return $request
-			->withHeader( 'Authorization', 'Bearer ' . $tokens['access_token'] )
-			->withHeader( 'ChatGPT-Account-ID', $tokens['account_id'] )
-			->withHeader( 'originator', 'codex_cli_rs' )
-			->withHeader( 'User-Agent', 'codex_cli_rs/' . self::client_version() . ' (WordPress)' )
-			->withHeader( 'session_id', wp_generate_uuid4() );
-	}
-
-	/**
-	 * Codex CLI version reported to the backend.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string
-	 */
-	public static function client_version() {
-		/**
-		 * Filters the Codex CLI version reported to the ChatGPT backend.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $version Version string.
-		 */
-		return (string) apply_filters( 'wzap_chatgpt_codex_client_version', self::CODEX_CLIENT_VERSION );
+		return $request->withHeader( 'Authorization', 'Bearer ' . $tokens['access_token'] );
 	}
 }

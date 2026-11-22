@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Provider for the ChatGPT Codex backend, authenticated with a ChatGPT account.
+ * Provider for the OpenAI Responses API, authenticated with a ChatGPT account.
  *
  * @since 1.0.0
  */
@@ -36,7 +36,7 @@ class Provider extends AbstractApiProvider {
 	 * @since 1.0.0
 	 */
 	protected static function baseUrl(): string {
-		return 'https://chatgpt.com/backend-api/codex';
+		return 'https://api.openai.com/v1'; // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Provider registered with the WordPress AI Client.
 	}
 
 	/**
@@ -53,9 +53,6 @@ class Provider extends AbstractApiProvider {
 		foreach ( $model_metadata->getSupportedCapabilities() as $capability ) {
 			if ( $capability->isTextGeneration() ) {
 				return new Text_Generation_Model( $model_metadata, $provider_metadata );
-			}
-			if ( $capability->isImageGeneration() ) {
-				return new Image_Generation_Model( $model_metadata, $provider_metadata );
 			}
 		}
 		/* translators: %s: model ID. */
@@ -75,7 +72,7 @@ class Provider extends AbstractApiProvider {
 			ProviderTypeEnum::cloud(),
 			admin_url( 'options-connectors.php' ),
 			RequestAuthenticationMethod::apiKey(),
-			__( 'Text and image generation using your ChatGPT subscription. Sign in with ChatGPT; no API key needed.', 'webberzone-ai-account-connector' ),
+			__( 'Text generation using your ChatGPT subscription. Sign in with ChatGPT; no API key needed.', 'webberzone-ai-account-connector' ),
 			file_exists( $logo ) ? $logo : null
 		);
 	}

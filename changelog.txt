@@ -1,13 +1,10 @@
 == Changelog ==
 
-= 1.0.1 =
-
-**Changed**
-
-* Grok sign-in now opens the xAI consent screen, the same kind of account login Warp uses. Paste the code that page shows to finish connecting. ChatGPT still uses a device code.
-
 = 1.0.0 =
 
 **Added**
 
-* Initial release: connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors, with text and image generation.
+* Connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
+* ChatGPT uses OpenAI's Sign in with ChatGPT for open-source apps and the public Responses API, for text generation. Paste back the address your browser is sent to.
+* Grok uses xAI's consent screen, for text and image generation. Paste the code it shows.
+* A warning on every connect dialog that must be accepted before signing in.

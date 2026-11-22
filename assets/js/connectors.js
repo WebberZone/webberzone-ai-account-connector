@@ -21,6 +21,7 @@ const {
 } = window.wp.element;
 const {
 	Button,
+	CheckboxControl,
 	ExternalLink,
 	Modal,
 	Notice,
@@ -36,6 +37,7 @@ const { providers = [] } = dataElement ? JSON.parse( dataElement.textContent ) :
 
 function registerAccount( config ) {
 	const s = config.strings || {};
+	const warning = Array.isArray( config.warning ) ? config.warning : [];
 
 	function call( action, fields ) {
 		return window
@@ -47,9 +49,7 @@ function registerAccount( config ) {
 			.then( ( response ) => response.json() )
 			.then( ( result ) => {
 				if ( ! result.success ) {
-					const error = new Error( result.data?.message || result.data || s.requestFailed );
-					error.retryable = result.data?.retryable === true;
-					throw error;
+					throw new Error( result.data?.message || result.data || s.requestFailed );
 				}
 				return result.data;
 			} );
@@ -67,10 +67,13 @@ function registerAccount( config ) {
 	}
 
 	function openConsentWindow() {
-		return window.open( 'about:blank', 'wzap-xai-signin' );
+		return window.open( 'about:blank', 'wzap-signin-' + config.prefix );
 	}
 
-	function BrowserSignIn( { onClose, onConnected, popupRef } ) {
+	function SignInModal( { onClose, onConnected } ) {
+		const popupRef = useRef( null );
+		const [ acknowledged, setAcknowledged ] = useState( 0 === warning.length );
+		const [ checked, setChecked ] = useState( false );
 		const [ authorizeUrl, setAuthorizeUrl ] = useState( '' );
 		const [ blocked, setBlocked ] = useState( false );
 		const [ code, setCode ] = useState( '' );
@@ -80,6 +83,9 @@ function registerAccount( config ) {
 		const [ attempt, setAttempt ] = useState( 0 );
 
 		useEffect( () => {
+			if ( ! acknowledged ) {
+				return undefined;
+			}
 			let active = true;
 			const popupAtStart = popupRef.current;
 			setReady( false );
@@ -87,7 +93,7 @@ function registerAccount( config ) {
 			setCode( '' );
 			setBlocked( ! popupAtStart );
 
-			call( 'start' )
+			call( 'start', { acknowledged: '1' } )
 				.then( ( data ) => {
 					if ( ! active ) {
 						return;
@@ -114,7 +120,7 @@ function registerAccount( config ) {
 			return () => {
 				active = false;
 			};
-		}, [ attempt ] );
+		}, [ acknowledged, attempt ] );
 
 		useEffect( () => {
 			return () => {
@@ -127,7 +133,7 @@ function registerAccount( config ) {
 						popup.close();
 					}
 				} catch ( err ) {
-					// Already on the xAI page, which this window cannot inspect. Leave it open.
+					// Already on the provider's page, which this window cannot inspect. Leave it open.
 				}
 			};
 		}, [] );
@@ -135,6 +141,12 @@ function registerAccount( config ) {
 		const close = () => {
 			call( 'cancel' ).catch( () => {} );
 			onClose();
+		};
+
+		const proceed = () => {
+			// Opened here, from the click, so the browser does not treat the sign-in page as a blocked pop-up.
+			popupRef.current = openConsentWindow();
+			setAcknowledged( true );
 		};
 
 		const retry = () => {
@@ -159,7 +171,34 @@ function registerAccount( config ) {
 		};
 
 		let body;
-		if ( ! ready && ! error ) {
+		if ( ! acknowledged ) {
+			body = el(
+				VStack,
+				{ spacing: 4 },
+				el(
+					Notice,
+					{ status: 'warning', isDismissible: false },
+					el(
+						VStack,
+						{ spacing: 2 },
+						el( Text, { weight: 600 }, s.warningTitle ),
+						warning.map( ( paragraph, index ) => el( Text, { as: 'p', key: index }, paragraph ) )
+					)
+				),
+				el( CheckboxControl, {
+					label: s.acknowledge,
+					checked,
+					onChange: setChecked,
+					__nextHasNoMarginBottom: true,
+				} ),
+				el(
+					HStack,
+					{ justify: 'flex-start' },
+					el( Button, { variant: 'primary', disabled: ! checked, onClick: proceed }, s.continue ),
+					el( Button, { variant: 'tertiary', onClick: close }, s.cancel )
+				)
+			);
+		} else if ( ! ready && ! error ) {
 			body = el( HStack, { justify: 'flex-start' }, el( Spinner ), el( Text, null, s.opening ) );
 		} else {
 			body = el(
@@ -175,7 +214,7 @@ function registerAccount( config ) {
 					ready && el( Text, { as: 'p' }, s.browserPaste ),
 					ready &&
 						el( TextControl, {
-							label: s.pasteLabel,
+							label: config.pasteLabel,
 							value: code,
 							onChange: setCode,
 							autoComplete: 'off',
@@ -202,121 +241,10 @@ function registerAccount( config ) {
 		return el( Modal, { title: s.signIn, onRequestClose: close, size: 'medium' }, body );
 	}
 
-	function SignInModal( { onClose, onConnected } ) {
-		const [ flow, setFlow ] = useState( null );
-		const [ error, setError ] = useState( null );
-		const [ attempt, setAttempt ] = useState( 0 );
-		const [ copied, setCopied ] = useState( false );
-		const timer = useRef();
-		const canCopy = typeof window.navigator.clipboard?.writeText === 'function';
-
-		useEffect( () => {
-			let active = true;
-			setFlow( null );
-			setError( null );
-
-			const poll = ( interval, expiresAt, failures = 0 ) => {
-				timer.current = window.setTimeout( () => {
-					call( 'poll' )
-						.then( ( status ) => {
-							if ( ! active ) {
-								return;
-							}
-							if ( 'connected' === status ) {
-								onConnected();
-								return;
-							}
-							poll( interval, expiresAt );
-						} )
-						.catch( ( e ) => {
-							if ( ! active ) {
-								return;
-							}
-							if ( e.retryable !== false && Date.now() < expiresAt * 1000 ) {
-								poll( interval, expiresAt, Math.min( failures + 1, 3 ) );
-								return;
-							}
-							setError( e.message );
-						} );
-				}, interval * 1000 * 2 ** failures );
-			};
-
-			call( 'start' )
-				.then( ( data ) => {
-					if ( active ) {
-						setFlow( data );
-						poll( data.interval, data.expires_at );
-					}
-				} )
-				.catch( ( e ) => active && setError( e.message ) );
-
-			return () => {
-				active = false;
-				window.clearTimeout( timer.current );
-			};
-		}, [ attempt ] );
-
-		const close = () => {
-			window.clearTimeout( timer.current );
-			call( 'cancel' ).catch( () => {} );
-			onClose();
-		};
-
-		const copy = () => {
-			if ( ! canCopy ) {
-				return;
-			}
-			window.navigator.clipboard
-				.writeText( flow.user_code )
-				.then( () => setCopied( true ) )
-				.catch( () => {} );
-		};
-
-		let body;
-		if ( error ) {
-			body = el(
-				VStack,
-				{ spacing: 4 },
-				el( Notice, { status: 'error', isDismissible: false }, error ),
-				el( Note ),
-				el(
-					HStack,
-					{ justify: 'flex-start' },
-					el( Button, { variant: 'primary', onClick: () => setAttempt( attempt + 1 ) }, s.tryAgain ),
-					el( Button, { variant: 'tertiary', onClick: close }, s.cancel )
-				)
-			);
-		} else if ( ! flow ) {
-			body = el( HStack, { justify: 'flex-start' }, el( Spinner ), el( Text, null, s.requesting ) );
-		} else {
-			body = el(
-				VStack,
-				{ spacing: 4 },
-				el( Note ),
-				el( Text, { as: 'p' }, linked( s.deviceStep, flow.verification_url ) ),
-				el( Text, { as: 'p' }, s.enterCode ),
-				el(
-					HStack,
-					{ justify: 'flex-start', spacing: 3 },
-					el(
-						'code',
-						{ style: { fontSize: '1.75em', padding: '0.4em 0.6em', letterSpacing: '0.1em', userSelect: 'all' } },
-						flow.user_code
-					),
-					el( Button, { variant: 'secondary', size: 'compact', onClick: copy, disabled: ! canCopy }, copied ? s.copied : s.copy )
-				),
-				el( HStack, { justify: 'flex-start' }, el( Spinner ), el( Text, { variant: 'muted' }, s.waiting ) )
-			);
-		}
-
-		return el( Modal, { title: s.signIn, onRequestClose: close, size: 'medium' }, body );
-	}
-
 	function AccountConnector( { name, description, logo } ) {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const [ isBusy, setIsBusy ] = useState( false );
 		const [ error, setError ] = useState( null );
-		const popupRef = useRef( null );
 		const connected = !! config.connected;
 
 		const disconnect = () => {
@@ -345,20 +273,7 @@ function registerAccount( config ) {
 						{ variant: 'tertiary', size: 'compact', isDestructive: true, isBusy, disabled: isBusy, onClick: disconnect },
 						s.disconnect
 				  )
-				: el(
-						Button,
-						{
-							variant: 'secondary',
-							size: 'compact',
-							onClick: () => {
-								if ( 'browser' === config.signInFlow ) {
-									popupRef.current = openConsentWindow();
-								}
-								setIsOpen( true );
-							},
-						},
-						s.signIn
-				  )
+				: el( Button, { variant: 'secondary', size: 'compact', onClick: () => setIsOpen( true ) }, s.signIn )
 		);
 
 		return el(
@@ -367,10 +282,9 @@ function registerAccount( config ) {
 			connected && config.account ? el( Text, { variant: 'muted', size: 12 }, config.account ) : null,
 			error && el( Notice, { status: 'error', isDismissible: false }, error ),
 			isOpen &&
-				el( 'browser' === config.signInFlow ? BrowserSignIn : SignInModal, {
+				el( SignInModal, {
 					onClose: () => setIsOpen( false ),
 					onConnected: () => window.location.reload(),
-					popupRef,
 				} )
 		);
 	}

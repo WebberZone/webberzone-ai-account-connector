@@ -53,20 +53,9 @@ class Config {
 	}
 
 	/**
-	 * Which sign-in UI the Connectors card should show.
-	 *
-	 * @since 1.0.1
-	 *
-	 * @return string 'device' or 'browser'.
-	 */
-	public static function sign_in_flow() {
-		return 'browser';
-	}
-
-	/**
 	 * First browser sign-in step. Text inside <a></a> is linked to the consent screen.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -77,12 +66,38 @@ class Config {
 	/**
 	 * Explains why a code has to be pasted back.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
 	public static function browser_paste() {
 		return __( '2. That page cannot return here, so it shows a one-time code (it may say to copy it into Grok Build). Paste the code below. It is valid for 5 minutes.', 'webberzone-ai-account-connector' );
+	}
+
+	/**
+	 * Warning shown on the connect dialog; the administrator must accept it before signing in.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string[] Paragraphs.
+	 */
+	public static function warning() {
+		return array(
+			__( 'This is not an official xAI integration. This plugin is independent and is not affiliated with, endorsed by or sponsored by xAI.', 'webberzone-ai-account-connector' ),
+			__( 'It signs in the way xAI\'s own command-line tools do, using their public client. That may break xAI\'s terms, and xAI may suspend or limit your account. xAI may also change or block it at any time.', 'webberzone-ai-account-connector' ),
+			__( 'Connect only if you are the administrator who will use it, on a site you control. The token is stored on this site, and other code running here, such as plugins and themes, can still use it while it is connected.', 'webberzone-ai-account-connector' ),
+		);
+	}
+
+	/**
+	 * Label for the field the sign-in code is pasted into.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public static function paste_label() {
+		return __( 'Sign-in code', 'webberzone-ai-account-connector' );
 	}
 
 	/**
@@ -97,17 +112,6 @@ class Config {
 			'text' => __( 'Sign in with an xAI account that has SuperGrok or X Premium. Some plans can sign in but are refused by the API; if so, the error is shown when you generate content.', 'webberzone-ai-account-connector' ),
 			'url'  => '',
 		);
-	}
-
-	/**
-	 * First sign-in step. Text inside <a></a> is linked to the device sign-in page.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string
-	 */
-	public static function device_step() {
-		return __( '1. Open <a>the xAI device sign-in page</a> and sign in.', 'webberzone-ai-account-connector' );
 	}
 
 	/**

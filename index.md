@@ -1,13 +1,13 @@
 ---
 title: WebberZone AI Account Connector
-description: Use your ChatGPT and Grok accounts for text and image generation in the WordPress AI Client. Sign in with your account, no API key needed.
+description: Use your ChatGPT and Grok accounts in the WordPress AI Client. Sign in from Settings → Connectors, no API key needed.
 permalink: /
 ---
 
 <div class="hero">
   <div class="eyebrow">Free &middot; Open Source &middot; No API Key</div>
   <h1>Use your <em>ChatGPT</em> and <em>Grok</em> accounts in the WordPress AI Client</h1>
-  <p class="lead">WebberZone AI Account Connector adds <strong>ChatGPT Account</strong> and <strong>Grok Account</strong> providers to the WordPress AI Client. Sign in from Settings&nbsp;→&nbsp;Connectors, and text and image generation run against your existing plan instead of a separately billed API key.</p>
+  <p class="lead">WebberZone AI Account Connector adds <strong>ChatGPT Account</strong> and <strong>Grok Account</strong> providers to the WordPress AI Client. Sign in from Settings&nbsp;→&nbsp;Connectors, and generation runs against your existing plan instead of a separately billed API key: text with ChatGPT, text and images with Grok.</p>
   <div class="hero-ctas">
     <a href="#installation" class="btn-primary">Installation</a>
     <a href="{{ '/docs/' | relative_url }}" class="btn-outline">Documentation</a>
@@ -23,8 +23,8 @@ permalink: /
 
   <div class="feature-grid">
     <div class="feature-card">
-      <h3>Sign in with your account</h3>
-      <p>ChatGPT uses a device code. Grok opens the xAI consent screen — approve access, then paste the code that page shows. Tokens are stored encrypted and refreshed automatically.</p>
+      <h3>Sign in once</h3>
+      <p>Approve access on the provider's page, then paste back the one-time code (Grok) or the address your browser ends up on (ChatGPT). Every connect dialog starts with a warning you must accept. Tokens are stored encrypted and refreshed automatically.</p>
     </div>
     <div class="feature-card">
       <h3>Text generation</h3>
@@ -32,11 +32,11 @@ permalink: /
     </div>
     <div class="feature-card">
       <h3>Image generation</h3>
-      <p>GPT Image 2 with ChatGPT, and the Grok Imagine image model with Grok.</p>
+      <p>Grok Imagine with Grok. A ChatGPT plan sign-in does not support image generation.</p>
     </div>
   </div>
 
-  <img class="screenshot" src="{{ '/site-assets/img/screenshot-connector.png' | relative_url }}" alt="The ChatGPT Account and Grok Account cards on the WordPress Settings → Connectors screen, both connected with a Disconnect button" width="652" height="291">
+  <img class="screenshot" src="{{ '/site-assets/img/screenshot-connector.png' | relative_url }}" alt="The ChatGPT Account and Grok Account cards on the WordPress Settings → Connectors screen, both connected with a Disconnect button" width="649" height="286">
 </div>
 
 <div class="home-section" style="padding-top:0;">
@@ -44,11 +44,11 @@ permalink: /
   <h2 class="section-title" style="margin-bottom:8px;">How it works, and the risk</h2>
   <div class="callout">
     <h3>Not an official OpenAI or xAI integration</h3>
-    <p>This plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI and Grok is a trademark of xAI; the names only describe which accounts it works with. WebberZone has no application registered with either provider. ChatGPT reuses the device-code sign-in of the Codex command-line tool. Grok reuses the public Grok CLI authorization-code flow, the same consent screen Warp uses for a SuperGrok or X Premium subscription, and you paste the code that screen shows because the redirect cannot come back to your site. Both call the same backends those tools use. ChatGPT requests identify themselves as the Codex command-line client. Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts.</p>
+    <p>This plugin is independent and is not affiliated with, endorsed by, or sponsored by OpenAI or xAI. ChatGPT is a trademark of OpenAI and Grok is a trademark of xAI; the names only describe which accounts it works with. ChatGPT uses OpenAI's official <a href="https://openai.com/policies/sign-in-with-chatgpt-terms/" target="_blank">Sign in with ChatGPT</a> for open-source apps and OpenAI's public Responses API. That programme is a preview and its terms may not cover every kind of hosted site. xAI has no equivalent programme, so Grok reuses the public OAuth client identifier of xAI's Grok command-line tools and signs in through xAI's consent screen, with a pasted code. WebberZone has no application of its own registered with either provider (with ChatGPT, each site registers itself with OpenAI as WebberZone AI Account Connector). Sign-in and requests go directly between your site and the provider; WebberZone receives no tokens or prompts.</p>
     <ul>
       <li>A provider may change or block this at any time.</li>
       <li>Using a subscription outside the provider's own apps may conflict with its terms and could put your account at risk. Check the terms yourself.</li>
-      <li>Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in. Use it on sites you control.</li>
+      <li>Anyone with administrator access to your site, or any code running on it, can use your plan while you are signed in. Use it on sites you control, and do not use one person's subscription for other people's requests, which OpenAI's terms forbid.</li>
     </ul>
   </div>
 </div>
@@ -63,12 +63,12 @@ permalink: /
       <p>When a release is available, download the plugin ZIP from <a href="https://github.com/WebberZone/webberzone-ai-account-connector/releases" target="_blank">GitHub Releases</a>, then upload and activate it under Plugins → Add New → Upload Plugin.</p>
     </li>
     <li>
-      <h3>For ChatGPT: add AI Provider for OpenAI and allow device login</h3>
-      <p>Install and activate <a href="https://wordpress.org/plugins/ai-provider-for-openai/" target="_blank">AI Provider for OpenAI</a>, then enable device code login for Codex under <a href="https://chatgpt.com/#settings/Security" target="_blank">ChatGPT Settings → Security</a>. Grok needs neither.</p>
+      <h3>For ChatGPT: add AI Provider for OpenAI</h3>
+      <p>Install and activate <a href="https://wordpress.org/plugins/ai-provider-for-openai/" target="_blank">AI Provider for OpenAI</a>. You need a ChatGPT Plus or Pro plan. Grok needs neither.</p>
     </li>
     <li>
       <h3>Sign in</h3>
-      <p>Go to <strong>Settings → Connectors</strong>, click <strong>Sign in with ChatGPT</strong> or <strong>Sign in with xAI</strong> on the matching card, and follow the prompts. If the AI plugin shows a connector approval notice, approve the account for the plugins that should use it.</p>
+      <p>Go to <strong>Settings → Connectors</strong>, click <strong>Sign in with ChatGPT</strong> or <strong>Sign in with xAI</strong> on the matching card, and follow the prompts. For ChatGPT, approve access, then paste the address your browser is sent to (it starts with <code>http://127.0.0.1</code> and will not load). If the AI plugin shows a connector approval notice, approve the account for the plugins that should use it.</p>
     </li>
   </ol>
 </div>
@@ -83,7 +83,7 @@ permalink: /
     </div>
     <div class="feature-card">
       <h3><a href="{{ '/docs/02-aac-advanced/how-sign-in-works/' | relative_url }}">How sign-in works</a></h3>
-      <p>The ChatGPT device-code flow and the Grok browser sign-in, token storage and encryption, refreshing, and the external services used.</p>
+      <p>The sign-in flows, token storage and encryption, refreshing, and the external services used.</p>
     </div>
     <div class="feature-card">
       <h3><a href="{{ '/docs/02-aac-advanced/troubleshooting/' | relative_url }}">Troubleshooting</a></h3>
@@ -99,7 +99,7 @@ permalink: /
 <div class="home-section" style="padding-top:0;">
   <div class="eyebrow">Limits</div>
   <h2 class="section-title" style="margin-bottom:8px;">What it doesn't do</h2>
-  <p style="color:var(--wz-warm-grey); max-width:64ch;">Embeddings and text-to-speech aren't available through an account sign-in; use the provider's API key for those. With ChatGPT, image editing isn't supported yet and sampling options such as temperature are accepted but ignored, because the ChatGPT backend rejects them.</p>
+  <p style="color:var(--wz-warm-grey); max-width:64ch;">Embeddings and text-to-speech aren't available through an account sign-in; use the provider's API key for those. A ChatGPT plan sign-in supports text generation only: no image generation, and sampling options such as temperature are accepted but ignored because OpenAI rejects them. ChatGPT usage counts against your plan's limits.</p>
 </div>
 
 <div class="home-section" style="padding-top:0;">

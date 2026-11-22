@@ -17,8 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Authorization Code + PKCE sign-in against auth.x.ai, and token refresh.
  *
- * This is the same public Grok CLI client and consent screen Warp uses to connect a
- * SuperGrok or X Premium subscription. xAI only allows the loopback redirect
+ * This uses the public Grok CLI client. xAI only allows the loopback redirect
  * http://127.0.0.1:56121/callback, which a WordPress site cannot receive, so the
  * consent screen shows a code and the site exchanges that code with the PKCE verifier.
  *
@@ -56,7 +55,7 @@ class OAuth extends OAuth_Client {
 	const REDIRECT_URI = 'http://127.0.0.1:56121/callback';
 
 	/**
-	 * How long a sign-in attempt can be finished, in seconds. Matches Warp's wait.
+	 * How long a sign-in attempt can be finished, in seconds.
 	 *
 	 * @var int
 	 */
@@ -74,12 +73,12 @@ class OAuth extends OAuth_Client {
 	 *
 	 * The PKCE verifier stays on the server. The browser only receives the authorize URL.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @return array{authorize_url: string, expires_at: int}
 	 * @throws RuntimeException When the pending sign-in cannot be stored.
 	 */
-	public static function start_device_flow() {
+	public static function start_sign_in() {
 		return static::with_lock(
 			static function () {
 				$verifier  = self::pkce_verifier();
@@ -102,21 +101,9 @@ class OAuth extends OAuth_Client {
 	}
 
 	/**
-	 * Grok does not poll. The pasted code is exchanged by exchange_authorization_code().
-	 *
-	 * @since 1.0.1
-	 *
-	 * @return string Never returns.
-	 * @throws RuntimeException Always. Kept so the shared poll action fails clearly.
-	 */
-	public static function poll_device_flow() {
-		throw new RuntimeException( esc_html__( 'Paste the code from the xAI sign-in page to finish connecting.', 'webberzone-ai-account-connector' ) );
-	}
-
-	/**
 	 * Exchanges the code shown on the xAI consent screen for tokens.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  string $code Authorization code copied from the consent screen.
 	 * @return string 'connected'.
@@ -173,7 +160,7 @@ class OAuth extends OAuth_Client {
 	 *
 	 * `plan=generic` is required for this public client. The referrer is only an attribution label.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  string $challenge PKCE S256 challenge.
 	 * @param  string $state     OAuth state. Not checked on the paste path; PKCE binds the code.
@@ -199,7 +186,7 @@ class OAuth extends OAuth_Client {
 	/**
 	 * A PKCE verifier: 32 random bytes, base64url, no padding (43 characters).
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -211,7 +198,7 @@ class OAuth extends OAuth_Client {
 	/**
 	 * S256 challenge for a PKCE verifier.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  string $verifier PKCE verifier.
 	 * @return string

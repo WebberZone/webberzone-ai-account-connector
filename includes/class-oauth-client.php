@@ -1,6 +1,6 @@
 <?php
 /**
- * Shared OAuth plumbing: token refresh with locking, pending device codes and HTTP helpers.
+ * Shared OAuth plumbing: token refresh with locking, pending sign-ins and HTTP helpers.
  *
  * @package WebberZone\AI_Account_Connector
  */
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Base class for the provider's OAuth implementation.
  *
- * Subclasses implement the provider-specific device-code flow, the refresh request and how token
+ * Subclasses implement the provider-specific sign-in, the refresh request and how token
  * responses are stored. Everything else, including the refresh lock, lives here.
  *
  * @since 1.0.0
@@ -29,7 +29,7 @@ abstract class OAuth_Client {
 	const FLOW_PREFIX = '';
 
 	/**
-	 * Fallback lifetime of a device code, in seconds.
+	 * Fallback lifetime of a pending sign-in, in seconds.
 	 *
 	 * @var int
 	 */
@@ -59,24 +59,25 @@ abstract class OAuth_Client {
 	const REFRESH_BACKOFF = 60;
 
 	/**
-	 * Requests a device code and stores the pending flow for the current user.
+	 * Starts a browser sign-in and stores the pending flow for the current user.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array User code, verification URL, polling interval and expiry timestamp.
-	 * @throws RuntimeException When the provider rejects the request.
+	 * @return array Authorization URL and expiry timestamp.
+	 * @throws RuntimeException When the pending sign-in cannot be stored.
 	 */
-	abstract public static function start_device_flow();
+	abstract public static function start_sign_in();
 
 	/**
-	 * Checks once whether the user approved the pending device code, and stores the tokens if so.
+	 * Finishes a sign-in from what the user pasted back from the provider, and stores the tokens.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string 'pending' or 'connected'.
-	 * @throws RuntimeException When the flow expired, was denied, or the provider returned an error.
+	 * @param  string $input Pasted code or address.
+	 * @return string 'connected'.
+	 * @throws RuntimeException When the sign-in expired, was denied, or the provider returned an error.
 	 */
-	abstract public static function poll_device_flow();
+	abstract public static function exchange_authorization_code( $input );
 
 	/**
 	 * Sends the refresh-token request.
@@ -113,11 +114,11 @@ abstract class OAuth_Client {
 	abstract protected static function store_tokens( array $body, array $previous = array() );
 
 	/**
-	 * Abandons the current user's pending device code.
+	 * Abandons the current user's pending sign-in.
 	 *
 	 * @since 1.0.0
 	 */
-	public static function cancel_device_flow() {
+	public static function cancel_sign_in() {
 		static::with_lock(
 			static function () {
 				delete_transient( static::flow_key() );
@@ -359,7 +360,7 @@ abstract class OAuth_Client {
 			}
 			$status = (int) wp_remote_retrieve_response_code( $response );
 			$error  = static::error_code( json_decode( (string) wp_remote_retrieve_body( $response ), true ) );
-			if ( 401 === $status || ( 400 === $status && ( 'invalid_grant' === $error || 0 === strpos( $error, 'refresh_token_' ) ) ) ) {
+			if ( 401 === $status || ( 400 === $status && ( in_array( $error, array( 'invalid_grant', 'invalid_refresh_token', 'token_expired' ), true ) || 0 === strpos( $error, 'refresh_token_' ) ) ) ) {
 				$token_store::clear();
 				throw new RuntimeException(
 					esc_html(
@@ -507,7 +508,7 @@ abstract class OAuth_Client {
 	}
 
 	/**
-	 * Transient key for the current user's pending device code.
+	 * Transient key for the current user's pending sign-in.
 	 *
 	 * @since 1.0.0
 	 *

@@ -55,7 +55,6 @@ abstract class Admin {
 	 */
 	public static function init() {
 		add_action( 'wp_ajax_' . static::PREFIX . '_start', array( static::class, 'ajax_start' ) );
-		add_action( 'wp_ajax_' . static::PREFIX . '_poll', array( static::class, 'ajax_poll' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_exchange', array( static::class, 'ajax_exchange' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_cancel', array( static::class, 'ajax_cancel' ) );
 		add_action( 'wp_ajax_' . static::PREFIX . '_disconnect', array( static::class, 'ajax_disconnect' ) );
@@ -77,66 +76,44 @@ abstract class Admin {
 	}
 
 	/**
-	 * AJAX: starts sign-in. ChatGPT requests a device code; Grok returns the xAI consent URL.
+	 * AJAX: starts sign-in and returns the provider's consent URL, once the administrator has acknowledged the warning.
 	 *
 	 * @since 1.0.0
 	 */
 	public static function ajax_start() {
-		$oauth = static::OAUTH;
+		$oauth  = static::OAUTH;
+		$config = static::CONFIG;
 		self::verify();
+		// The warning is also enforced here, so the acknowledgement cannot be skipped by calling the action directly.
+		if ( $config::warning() && empty( $_POST['acknowledged'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in verify().
+			wp_send_json_error( __( 'Read and accept the warning before connecting.', 'webberzone-ai-account-connector' ) );
+		}
 		try {
-			wp_send_json_success( $oauth::start_device_flow() );
+			wp_send_json_success( $oauth::start_sign_in() );
 		} catch ( \Exception $e ) {
 			wp_send_json_error( html_entity_decode( $e->getMessage(), ENT_QUOTES ) );
 		}
 	}
 
 	/**
-	 * AJAX: checks whether the device code was approved.
+	 * AJAX: finishes sign-in from the code or address pasted back from the provider's consent screen.
 	 *
 	 * @since 1.0.0
 	 */
-	public static function ajax_poll() {
-		$oauth = static::OAUTH;
-		self::verify();
-		try {
-			wp_send_json_success( $oauth::poll_device_flow() );
-		} catch ( \Exception $e ) {
-			wp_send_json_error(
-				array(
-					'message'   => html_entity_decode( $e->getMessage(), ENT_QUOTES ),
-					'retryable' => in_array( $e->getCode(), array( 408, 429 ), true ) || $e->getCode() >= 500,
-				)
-			);
-		}
-	}
-
-	/**
-	 * AJAX: exchanges a code pasted from the xAI consent screen.
-	 *
-	 * ChatGPT does not use this action.
-	 *
-	 * @since 1.0.1
-	 */
 	public static function ajax_exchange() {
 		$oauth = static::OAUTH;
-		check_ajax_referer( static::NONCE );
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Sorry, you are not allowed to do that.', 'webberzone-ai-account-connector' ), 403 );
-		}
-		if ( ! method_exists( $oauth, 'exchange_authorization_code' ) ) {
-			wp_send_json_error( __( 'This account does not use a pasted sign-in code.', 'webberzone-ai-account-connector' ) );
-		}
-		$code = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
+		self::verify();
+		// Parsed and compared only, never output; sanitize_text_field() would strip percent-encoded characters from a pasted address.
+		$input = isset( $_POST['code'] ) ? substr( (string) preg_replace( '/[\x00-\x1F\x7F]+/', '', wp_unslash( $_POST['code'] ) ), 0, 4096 ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified in verify().
 		try {
-			wp_send_json_success( $oauth::exchange_authorization_code( $code ) );
+			wp_send_json_success( $oauth::exchange_authorization_code( $input ) );
 		} catch ( \Exception $e ) {
 			wp_send_json_error( html_entity_decode( $e->getMessage(), ENT_QUOTES ) );
 		}
 	}
 
 	/**
-	 * AJAX: abandons the pending device code.
+	 * AJAX: abandons the pending sign-in.
 	 *
 	 * @since 1.0.0
 	 */
@@ -144,7 +121,7 @@ abstract class Admin {
 		$oauth = static::OAUTH;
 		self::verify();
 		try {
-			$oauth::cancel_device_flow();
+			$oauth::cancel_sign_in();
 			wp_send_json_success();
 		} catch ( \Exception $e ) {
 			wp_send_json_error( html_entity_decode( $e->getMessage(), ENT_QUOTES ) );

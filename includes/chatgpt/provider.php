@@ -95,7 +95,7 @@ function attach_authentication() {
  *
  * @since 1.0.0
  *
- * @param  bool $has_support Whether credentials or image support are already available.
+ * @param  bool $has_support Whether credentials are already available.
  * @return bool
  */
 function report_connected( $has_support ) {
