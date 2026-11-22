@@ -32,6 +32,7 @@ docs/
 dev-helpers/
 _layouts/
 _includes/
+/_plugins/
 /site-assets/
 /_site/
 _config.yml
