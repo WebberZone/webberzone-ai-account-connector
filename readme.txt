@@ -4,7 +4,7 @@ Tags: ai, connectors, chatgpt, grok
 Requires at least: 7.0
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,9 +67,11 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 
 = 1.0.3 =
 
+Release date: 23 November 2026
+
 **Added**
 
-* WebberZone AI Account Connector icon for WordPress update details and the project site.
+* Plugin icon for WordPress update details and the project site.
 
 = 1.0.2 =
 
@@ -90,13 +92,15 @@ Release date: 22 November 2026
 * The ChatGPT connector no longer requires the separate AI Provider for OpenAI plugin. Existing account connections carry over.
 
 = 1.0.0 =
+
+Release date: 22 November 2026
+
 * Automatic updates from GitHub releases when a newer version is published.
 * Connect ChatGPT and Grok accounts to the WordPress AI Client from Settings → Connectors.
 * ChatGPT uses OpenAI's Sign in with ChatGPT for open-source apps and the public Responses API, for text generation. Paste back the address your browser is sent to.
 * Grok uses xAI's device-code sign-in, for text and image generation. Enter the code on xAI's page; nothing is pasted back.
 * A warning on every connect dialog that must be accepted before signing in.
 
-== Upgrade Notice ==
+= Earlier versions =
 
-= 1.0.2 =
-Simplifies ChatGPT request and response handling.
+For the changelog of earlier versions, please refer to the [releases page on GitHub](https://github.com/WebberZone/webberzone-ai-account-connector/releases).

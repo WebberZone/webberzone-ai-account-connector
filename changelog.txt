@@ -2,9 +2,11 @@
 
 = 1.0.3 =
 
+Release date: 23 November 2026
+
 **Added**
 
-* WebberZone AI Account Connector icon for WordPress update details and the project site.
+* Plugin icon for WordPress update details and the project site.
 
 = 1.0.2 =
 

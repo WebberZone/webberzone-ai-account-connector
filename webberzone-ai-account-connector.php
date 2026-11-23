@@ -38,7 +38,7 @@ spl_autoload_register(
 
 if ( apply_filters( 'wzaiac_enable_update_checks', true ) && is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
-	$update_checker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+	$update_checker = \YahnisElsts\PluginUpdateChecker\v6\PucFactory::buildUpdateChecker(
 		'https://github.com/WebberZone/webberzone-ai-account-connector',
 		__FILE__,
 		'webberzone-ai-account-connector'
@@ -47,7 +47,7 @@ if ( apply_filters( 'wzaiac_enable_update_checks', true ) && is_readable( __DIR_
 	if ( method_exists( $github_api, 'enableReleaseAssets' ) ) {
 		$github_api->enableReleaseAssets(
 			'/^webberzone-ai-account-connector\.zip$/',
-			\YahnisElsts\PluginUpdateChecker\v5p7\Vcs\Api::REQUIRE_RELEASE_ASSETS
+			$github_api::REQUIRE_RELEASE_ASSETS
 		);
 	}
 	add_filter(
