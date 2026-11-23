@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb2dc3ca80b0779b24457b0511d6e011",
+    "content-hash": "39c15a6f6626ccfccab7c31c4327db99",
     "packages": [
         {
             "name": "yahnis-elsts/plugin-update-checker",
-            "version": "v5.7",
+            "version": "v6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/YahnisElsts/plugin-update-checker.git",
-                "reference": "275a96a2a18d03c34c87f35cb68673c8c49ac3b1"
+                "reference": "bb71d4eaf1e83b645d5ae368eb4f2f6986752b5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/YahnisElsts/plugin-update-checker/zipball/275a96a2a18d03c34c87f35cb68673c8c49ac3b1",
-                "reference": "275a96a2a18d03c34c87f35cb68673c8c49ac3b1",
+                "url": "https://api.github.com/repos/YahnisElsts/plugin-update-checker/zipball/bb71d4eaf1e83b645d5ae368eb4f2f6986752b5d",
+                "reference": "bb71d4eaf1e83b645d5ae368eb4f2f6986752b5d",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=5.6.20"
+                "php": ">=7.4"
             },
             "type": "library",
             "autoload": {
                 "files": [
-                    "load-v5p7.php"
+                    "load-v6p0.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -52,10 +52,9 @@
             ],
             "support": {
                 "issues": "https://github.com/YahnisElsts/plugin-update-checker/issues",
-                "source": "https://github.com/YahnisElsts/plugin-update-checker/tree/v5.7"
+                "source": "https://github.com/YahnisElsts/plugin-update-checker/tree/v6.0"
             },
-            "time": "2026-05-26T12:48:45+00:00",
-            "published-time": "2026-05-26T13:21:40+00:00"
+            "time": "2026-11-06T15:04:15+00:00"
         }
     ],
     "packages-dev": [
@@ -153,8 +152,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2026-05-06T08:26:05+00:00",
-            "published-time": "2026-05-06T12:56:03+00:00"
+            "time": "2026-05-06T08:26:05+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -232,8 +230,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-09T07:06:30+00:00",
-            "published-time": "2024-09-09T07:07:05+00:00"
+            "time": "2024-09-09T07:06:30+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -312,8 +309,7 @@
                 "issues": "https://github.com/php-http/discovery/issues",
                 "source": "https://github.com/php-http/discovery/tree/1.20.0"
             },
-            "time": "2024-10-02T11:20:13+00:00",
-            "published-time": "2024-10-02T11:21:00+00:00"
+            "time": "2024-10-02T11:20:13+00:00"
         },
         {
             "name": "php-http/httplug",
@@ -370,8 +366,7 @@
                 "issues": "https://github.com/php-http/httplug/issues",
                 "source": "https://github.com/php-http/httplug/tree/2.4.1"
             },
-            "time": "2024-09-23T11:39:58+00:00",
-            "published-time": "2024-09-23T11:40:47+00:00"
+            "time": "2024-09-23T11:39:58+00:00"
         },
         {
             "name": "php-http/promise",
@@ -423,8 +418,7 @@
                 "issues": "https://github.com/php-http/promise/issues",
                 "source": "https://github.com/php-http/promise/tree/1.3.1"
             },
-            "time": "2024-03-15T13:55:21+00:00",
-            "published-time": "2024-03-15T13:55:45+00:00"
+            "time": "2024-03-15T13:55:21+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
@@ -476,8 +470,7 @@
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
                 "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.9.4"
             },
-            "time": "2026-05-01T20:36:01+00:00",
-            "published-time": "2026-05-21T21:46:34+00:00"
+            "time": "2026-05-01T20:36:01+00:00"
         },
         {
             "name": "phpcsstandards/phpcsextra",
@@ -559,8 +552,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2026-07-27T11:13:17+00:00",
-            "published-time": "2026-07-27T11:19:59+00:00"
+            "time": "2026-07-27T11:13:17+00:00"
         },
         {
             "name": "phpcsstandards/phpcsutils",
@@ -653,8 +645,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2026-07-27T10:28:41+00:00",
-            "published-time": "2026-07-27T10:36:31+00:00"
+            "time": "2026-07-27T10:28:41+00:00"
         },
         {
             "name": "phpstan/extension-installer",
@@ -702,8 +693,7 @@
                 "issues": "https://github.com/phpstan/extension-installer/issues",
                 "source": "https://github.com/phpstan/extension-installer/tree/1.4.3"
             },
-            "time": "2024-09-04T20:21:43+00:00",
-            "published-time": "2024-09-04T20:22:27+00:00"
+            "time": "2024-09-04T20:21:43+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -767,8 +757,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-19T10:31:11+00:00",
-            "published-time": "2026-11-19T10:31:27+00:00"
+            "time": "2026-11-19T10:31:11+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -818,8 +807,7 @@
                 "issues": "https://github.com/php-fig/event-dispatcher/issues",
                 "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
             },
-            "time": "2019-01-08T18:20:26+00:00",
-            "published-time": "2019-03-25T15:31:44+00:00"
+            "time": "2019-01-08T18:20:26+00:00"
         },
         {
             "name": "psr/http-client",
@@ -871,8 +859,7 @@
             "support": {
                 "source": "https://github.com/php-fig/http-client"
             },
-            "time": "2023-09-23T14:17:50+00:00",
-            "published-time": "2023-09-23T14:18:12+00:00"
+            "time": "2023-09-23T14:17:50+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -927,8 +914,7 @@
             "support": {
                 "source": "https://github.com/php-fig/http-factory"
             },
-            "time": "2024-04-15T12:06:14+00:00",
-            "published-time": "2024-05-10T07:32:19+00:00"
+            "time": "2024-04-15T12:06:14+00:00"
         },
         {
             "name": "psr/http-message",
@@ -981,8 +967,7 @@
             "support": {
                 "source": "https://github.com/php-fig/http-message/tree/2.0"
             },
-            "time": "2023-04-04T09:54:51+00:00",
-            "published-time": "2023-04-04T09:55:35+00:00"
+            "time": "2023-04-04T09:54:51+00:00"
         },
         {
             "name": "psr/simple-cache",
@@ -1033,8 +1018,7 @@
             "support": {
                 "source": "https://github.com/php-fig/simple-cache/tree/3.0.0"
             },
-            "time": "2021-10-29T13:26:27+00:00",
-            "published-time": "2021-10-29T13:27:19+00:00"
+            "time": "2021-10-29T13:26:27+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -1113,8 +1097,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2026-08-06T00:17:32+00:00",
-            "published-time": "2026-08-06T01:05:02+00:00"
+            "time": "2026-08-06T00:17:32+00:00"
         },
         {
             "name": "szepeviktor/phpstan-wordpress",
@@ -1177,8 +1160,7 @@
                 "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
                 "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v2.0.4"
             },
-            "time": "2026-05-22T16:22:09+00:00",
-            "published-time": "2026-08-28T06:48:49+00:00"
+            "time": "2026-05-22T16:22:09+00:00"
         },
         {
             "name": "wordpress/php-ai-client",
@@ -1256,8 +1238,7 @@
                 "issues": "https://github.com/WordPress/php-ai-client/issues",
                 "source": "https://github.com/WordPress/php-ai-client"
             },
-            "time": "2026-10-28T20:34:49+00:00",
-            "published-time": "2026-10-28T20:36:28+00:00"
+            "time": "2026-10-28T20:34:49+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
@@ -1323,8 +1304,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-07-27T11:53:23+00:00",
-            "published-time": "2026-07-27T11:55:52+00:00"
+            "time": "2026-07-27T11:53:23+00:00"
         }
     ],
     "aliases": [],
@@ -1336,5 +1316,5 @@
         "php": ">=7.4"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.9.0"
 }

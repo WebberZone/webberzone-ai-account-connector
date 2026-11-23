@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": ">=7.4",
-        "yahnis-elsts/plugin-update-checker": "^5.0"
+        "yahnis-elsts/plugin-update-checker": "^6.0"
     },
     "require-dev": {
         "szepeviktor/phpstan-wordpress": "^2",
