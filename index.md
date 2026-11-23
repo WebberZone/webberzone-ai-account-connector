@@ -5,6 +5,7 @@ permalink: /
 ---
 
 <div class="hero">
+  <img src="{{ '/assets/icon.svg' | relative_url }}" alt="" width="72" height="72" class="hero-icon">
   <div class="eyebrow">Free &middot; Open Source &middot; No API Key</div>
   <h1>Use your <em>ChatGPT</em> and <em>Grok</em> accounts in the WordPress AI Client</h1>
   <p class="lead">WebberZone AI Account Connector adds <strong>ChatGPT Account</strong> and <strong>Grok Account</strong> providers to the WordPress AI Client. Sign in from Settings&nbsp;→&nbsp;Connectors, and generation runs against your existing plan instead of a separately billed API key: text with ChatGPT, text and images with Grok.</p>

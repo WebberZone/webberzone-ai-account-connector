@@ -65,6 +65,12 @@ How sign-in works: ChatGPT uses OpenAI's official Sign in with ChatGPT for open-
 
 == Changelog ==
 
+= 1.0.3 =
+
+**Added**
+
+* WebberZone AI Account Connector icon for WordPress update details and the project site.
+
 = 1.0.2 =
 
 Release date: 23 November 2026

@@ -12,6 +12,7 @@ on:
       - 'docs/**'
       - 'index.md'
       - 'favicon.ico'
+      - 'assets/icon*'
       - 'Gemfile'
       - 'Gemfile.lock'
       - '.github/workflows/pages.yml'

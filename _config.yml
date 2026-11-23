@@ -34,7 +34,8 @@ exclude:
   - includes
   - languages
   - uninstall.php
-  - assets
+  - assets/images
+  - assets/js
   - build-zip.sh
   - build-assets.js
   - package.json
